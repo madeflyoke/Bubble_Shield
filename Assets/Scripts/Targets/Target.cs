@@ -1,4 +1,5 @@
 using System;
+using Targets.Enums;
 using Targets.Utility;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ namespace Targets
     {
         public event Action TargetClicked;
 
+        public TargetVariant Variant => _targetData.Variant;
         [field: SerializeField] public Collider2D Collider { get; private set; }
         
         [SerializeField] private Image _image;
