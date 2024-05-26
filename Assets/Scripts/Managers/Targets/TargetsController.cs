@@ -5,7 +5,7 @@ using Lean.Pool;
 using Targets;
 using UnityEngine;
 
-namespace Managers
+namespace Managers.Targets
 {
     public class TargetsController : MonoBehaviour
     {
@@ -18,6 +18,7 @@ namespace Managers
         private void Start()
         {
             _currentTargets = new List<Target>();
+            Target.TargetClicked += OnTargetClicked;
             _targetsSpawner.Spawn();
         }
 
@@ -46,6 +47,15 @@ namespace Managers
                 _currentTargets.Remove(target);
                 LeanPool.Despawn(target);
                 TargetFinished?.Invoke(target);
+            }
+        }
+
+        private void OnTargetClicked(Target target)
+        {
+            if (_currentTargets.Contains(target))
+            {
+                _currentTargets.Remove(target);
+                LeanPool.Despawn(target);
             }
         }
     }

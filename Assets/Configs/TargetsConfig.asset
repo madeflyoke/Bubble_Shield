@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d18b09257b54fa4396dd6838e49ad3f, type: 3}
   m_Name: TargetsConfig
   m_EditorClassIdentifier: 
+  <DefaultSpeed>k__BackingField: 3
   _targetVariantsData:
   - Variant: 2
     Sprites:
@@ -27,5 +28,5 @@ MonoBehaviour:
     - {fileID: -1050090758, guid: 11785ba809aa4f44cb4d77eff0fc2fa5, type: 3}
     - {fileID: 914441480, guid: 11785ba809aa4f44cb4d77eff0fc2fa5, type: 3}
     - {fileID: -569166994, guid: 11785ba809aa4f44cb4d77eff0fc2fa5, type: 3}
-    - {fileID: -1931571684, guid: 11785ba809aa4f44cb4d77eff0fc2fa5, type: 3}
     - {fileID: -1115337248, guid: 11785ba809aa4f44cb4d77eff0fc2fa5, type: 3}
+    - {fileID: -80999636, guid: 11785ba809aa4f44cb4d77eff0fc2fa5, type: 3}

@@ -1,15 +1,21 @@
 using TMPro;
 using UnityEngine;
 
-namespace UI
+namespace Score.View
 {
     public class ScoreView : MonoBehaviour
     {
         [SerializeField] private TMP_Text _scoreText;
+        [SerializeField] private TMP_Text _scoreRecordText;
 
-        public void SetScoreText(int score)
+        public void SetScoreText(int value)
         {
-            _scoreText.text = score.ToString();
+            _scoreText.text = value.ToString();
+        }
+
+        public void SetRecordScoreText(int value)
+        {
+            _scoreRecordText.text = value.ToString();
         }
     }
 }

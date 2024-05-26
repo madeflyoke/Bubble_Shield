@@ -8,7 +8,7 @@ namespace Targets
 {
     public class Target : MonoBehaviour
     {
-        public event Action TargetClicked;
+        public static event Action<Target> TargetClicked;
 
         public TargetVariant Variant => _targetData.Variant;
         [field: SerializeField] public Collider2D Collider { get; private set; }
@@ -17,12 +17,15 @@ namespace Targets
         [SerializeField] private Button _button;
         
         private TargetData _targetData;
+        private float _currentSpeed;
 
         public void Initialize(TargetData targetData)
         {
             _targetData = targetData;
             _image.preserveAspect = true;
             SetSprite(_targetData.Sprite);
+            _button.onClick.AddListener(OnButtonClicked);
+            _currentSpeed = targetData.Speed;
         }
 
         private void SetSprite(Sprite sprite)
@@ -32,7 +35,17 @@ namespace Targets
 
         private void FixedUpdate()
         {
-            transform.position -= transform.up * Time.fixedDeltaTime * 3f;
+            transform.position -= transform.up * Time.fixedDeltaTime * _currentSpeed;
+        }
+
+        private void OnButtonClicked()
+        {
+            TargetClicked?.Invoke(this);
+        }
+
+        private void OnDisable()
+        {
+            _button.onClick.RemoveListener(OnButtonClicked);
         }
     }
 }

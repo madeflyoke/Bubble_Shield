@@ -5,7 +5,7 @@ using Targets.Enums;
 using Targets.Utility;
 using UnityEngine;
 
-namespace Managers
+namespace Managers.Targets
 {
     public class TargetsFactory : MonoBehaviour
     {
@@ -19,7 +19,8 @@ namespace Managers
             target.Initialize(new TargetData()
             {
                 Variant = spawnData.Variant,
-                Sprite = _targetsConfig.GetRandomSprite(spawnData.Variant)
+                Sprite = _targetsConfig.GetRandomSprite(spawnData.Variant),
+                Speed = _targetsConfig.DefaultSpeed
             });
             return target;
         }

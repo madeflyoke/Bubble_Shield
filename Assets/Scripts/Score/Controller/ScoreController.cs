@@ -1,8 +1,8 @@
-using Managers;
+using Managers.Targets;
 using Score.Model;
+using Score.View;
 using Targets;
 using Targets.Enums;
-using UI;
 using UnityEngine;
 
 namespace Score.Controller
@@ -13,11 +13,13 @@ namespace Score.Controller
 
         [SerializeField] private ScoreView _scoreView;
         private ScoreData _scoreData;
+        private int _currentScore;
 
         private void Awake()
         {
             _scoreData = new ScoreData();
-            _scoreView.SetScoreText(_scoreData.CurrentScoreValue);
+            _scoreView.SetScoreText(0);
+            _scoreView.SetRecordScoreText(_scoreData.RecordScoreValue);
         }
 
         private void OnEnable()
@@ -31,19 +33,25 @@ namespace Score.Controller
         
         private void OnTargetFinished(Target target)
         {
-            int newScore = 0;
+            Debug.LogWarning(target.Variant);
             switch (target.Variant)
             {
                 case TargetVariant.ENEMY:
-                    newScore = _scoreData.CurrentScoreValue+1; //1 move to config "score per enemy"?
+                    _currentScore--; 
                     break;
-                case TargetVariant.ALLY:
-                    newScore = _scoreData.CurrentScoreValue-1;
+                case TargetVariant.ALLY: //1 move to config "score per ..."?
+                    _currentScore++;
                     break;
             }
 
-            newScore = Mathf.Clamp(newScore, 0, int.MaxValue);
-            _scoreData.SetScoreValue(newScore, true);
+            _currentScore = Mathf.Clamp(_currentScore, 0, int.MaxValue);
+            _scoreView.SetScoreText(_currentScore);
+            
+            if (_currentScore>_scoreData.RecordScoreValue)
+            {
+                _scoreData.SetRecordScoreValue(_currentScore,true);
+                _scoreView.SetRecordScoreText(_currentScore);
+            }
         }
     }
 }

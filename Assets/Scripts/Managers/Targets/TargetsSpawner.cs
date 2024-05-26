@@ -10,7 +10,7 @@ using Targets.Tools;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Managers
+namespace Managers.Targets
 {
     public class TargetsSpawner : MonoBehaviour
     {
@@ -25,6 +25,7 @@ namespace Managers
         [SerializeField] private Vector3 _targetCalculatedScale;
         private List<RectTransform> _spawnPositionsShuffled;
         private CancellationTokenSource _cts;
+        private Target _currentHighestElement;
 
         public void Awake()
         {
@@ -41,20 +42,46 @@ namespace Managers
                 
                 _spawnPositionsShuffled.Shuffle();
 
+                Target queueHighestElement = null;
+                
                 for (int i = 0; i < _targetsPerSpawn; i++)
                 {
                     var spawnPoint = _spawnPositionsShuffled[i];
-                    var randomPosition = spawnPoint.position;
-                    randomPosition.y += Random.Range(-0.5f, 0.5f);
+                    var spawnPosition = spawnPoint.position;
+                    var newPosY = spawnPosition.y + Random.Range(-2f, 2f);
+                    
+                    if (_currentHighestElement != null) //guarantee to element will be higher than previous
+                    {
+                        var limitedY = _currentHighestElement.transform.position.y + _targetCalculatedScale.y;
+                        newPosY = Mathf.Clamp(newPosY, limitedY, newPosY);
+                    }
+                    
+                    spawnPosition.y = newPosY;
+                  
                     var target =_targetsFactory.CreateTarget(new TargetsFactory.TargetSpawnData()
                     {
                         Parent = spawnPoint,
-                        Position = randomPosition,
+                        Position = spawnPosition,
                         Scale = _targetCalculatedScale,
                         Variant = Random.Range(0f,1f)<_allySpawnChance? TargetVariant.ALLY: TargetVariant.ENEMY
                     });
+                    
                     TargetSpawned?.Invoke(target);
+                    
+                    if (i==0)
+                    {
+                        queueHighestElement = target;
+                    }
+                    else
+                    {
+                        if (spawnPosition.y>queueHighestElement.transform.position.y)
+                        {
+                            queueHighestElement = target;
+                        }
+                    }
                 }
+
+                _currentHighestElement = queueHighestElement;
             }
         }
         
@@ -87,7 +114,8 @@ namespace Managers
             var leftPos = new Vector3(minX.x, EDITOR_spawnHeight, 0f);
             var rightPos = new Vector3(maxX.x, EDITOR_spawnHeight, 0f);
             var step = (Mathf.Abs(rightPos.x - leftPos.x)-EDITOR_spawnPadding*2f) / (_targetsCount-1);
-            _targetCalculatedScale = Vector3.one*EDITOR_spawnPadding*2f * 0.9f;
+            var minSize = Mathf.Min(EDITOR_spawnPadding * 2f, step);
+            _targetCalculatedScale = Vector3.one*minSize * 0.9f;
             
             for (int i = 0; i < _targetsCount; i++)
             {
