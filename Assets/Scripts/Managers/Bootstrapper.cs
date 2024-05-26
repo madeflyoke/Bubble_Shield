@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
-using EasyButtons;
 using Services;
 using Services.Interfaces;
 using UnityEditor;
@@ -19,34 +17,33 @@ namespace Managers
         
         private void Awake()
         {
-            
+            InitializeServices();
         }
 
         private async void InitializeServices()
         {
-            _services = new Dictionary<Type, IService>();
-            AddService<YandexService>();
-            
-            
-            foreach (var service in _services)
-            {
-                await UniTask. service.Value.Initialize();
-            }
-            
             TService AddService<TService>() where TService: IService
             {
                 var instance = Activator.CreateInstance<TService>();
                 _services.Add(typeof(TService), instance);
                 return instance;
             }
-        }
+            
+            _services = new Dictionary<Type, IService>();
+            AddService<YandexService>();
+            
+            _cts = new CancellationTokenSource();
 
-        private void Start()
-        {
+            foreach (var service in _services)
+            {
+                Debug.LogWarning($"Service {service.Value} started initialization...");
+                await service.Value.Initialize(_cts);
+                Debug.LogWarning($"Service {service.Value} initialized");
+            }
+            
             LoadMainScene();
         }
-
-        [Button]
+        
         private void LoadMainScene()
         {
             SceneManager.LoadSceneAsync(_mainSceneName);
@@ -57,6 +54,12 @@ namespace Managers
             return (TService) _services[typeof(TService)];
         }
         
+        private void OnDestroy()
+        {
+            _cts?.Cancel();
+        }
+        
+                
 #if UNITY_EDITOR
 
         [SerializeField] private SceneAsset EDITOR_mainScene;

@@ -1,7 +1,10 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
+
 namespace Services.Interfaces
 {
     public interface IService
     {
-        public void Initialize();
+        public UniTask Initialize(CancellationTokenSource cts);
     }
 }

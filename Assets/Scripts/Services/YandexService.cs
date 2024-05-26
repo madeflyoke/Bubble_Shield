@@ -1,31 +1,24 @@
-using System.Collections;
+using System.Threading;
 using Agava.YandexGames;
+using Cysharp.Threading.Tasks;
 using Services.Interfaces;
-using UnityEngine;
 
 namespace Services
 {
     public class YandexService : IService
     {
-        private void Awake()
+        public async UniTask Initialize(CancellationTokenSource cts)
         {
             YandexGamesSdk.CallbackLogging = true;
-        }
-
-        private IEnumerator Start()
-        {
+            
 #if !UNITY_WEBGL || UNITY_EDITOR
-            yield break;
-#endif
-            // Always wait for it if invoking something immediately in the first scene.
-            yield return YandexGamesSdk.Initialize();
-
+            await UniTask.Delay(1000, cancellationToken:cts.Token).SuppressCancellationThrow();
+#else
+            await YandexGamesSdk.Initialize().ToUniTask(cancellationToken:cts.Token).SuppressCancellationThrow();
+            
             //if (PlayerAccount.IsAuthorized == false)
-               // PlayerAccount.StartAuthorizationPolling(1500);
-        }
-
-        public async void Initialize()
-        {
+            // PlayerAccount.StartAuthorizationPolling(1500);
+#endif
             
         }
     }
