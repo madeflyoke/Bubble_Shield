@@ -87,7 +87,8 @@ namespace Managers
             var leftPos = new Vector3(minX.x, EDITOR_spawnHeight, 0f);
             var rightPos = new Vector3(maxX.x, EDITOR_spawnHeight, 0f);
             var step = (Mathf.Abs(rightPos.x - leftPos.x)-EDITOR_spawnPadding*2f) / (_targetsCount-1);
-            _targetCalculatedScale = Vector3.one*step * 0.98f;
+            _targetCalculatedScale = Vector3.one*EDITOR_spawnPadding*2f * 0.9f;
+            
             for (int i = 0; i < _targetsCount; i++)
             {
                 var pos = leftPos+ Vector3.right*step * i+Vector3.right*EDITOR_spawnPadding;

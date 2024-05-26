@@ -7,6 +7,7 @@ namespace Services
 {
     public class YandexService : IService
     {
+        
         public async UniTask Initialize(CancellationTokenSource cts)
         {
             YandexGamesSdk.CallbackLogging = true;

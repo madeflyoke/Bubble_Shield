@@ -1,18 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
+using Managers;
 using UnityEngine;
+using Zenject;
 
-public class ManagersInstaller : MonoBehaviour
+namespace Installers
 {
-    // Start is called before the first frame update
-    void Start()
+    public class ManagersInstaller : MonoInstaller
     {
+        [SerializeField] private Bootstrapper _bootstrapper;
         
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public override void InstallBindings()
+        {
+            Container.Bind<Bootstrapper>().FromComponentInNewPrefab(_bootstrapper).AsSingle().NonLazy();
+        }
     }
 }
