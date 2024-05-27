@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lean.Pool;
-using Targets;
+using Targets.Managers.Spawn;
+using Targets.Utility;
 using UnityEngine;
 
-namespace Managers.Targets
+namespace Targets.Managers
 {
     public class TargetsController : MonoBehaviour
     {
@@ -15,11 +16,11 @@ namespace Managers.Targets
         [SerializeField] private FinishZone _finishZone;
         private List<Target> _currentTargets;
         
-        private void Start()
+        public void Initialize(TargetsSpawnData spawnData, LevelTargetStats levelTargetStats)
         {
             _currentTargets = new List<Target>();
             Target.TargetClicked += OnTargetClicked;
-            _targetsSpawner.Spawn();
+            _targetsSpawner.Initialize(spawnData, levelTargetStats);
         }
 
         private void OnEnable()
@@ -58,5 +59,14 @@ namespace Managers.Targets
                 LeanPool.Despawn(target);
             }
         }
+        
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            _finishZone ??= FindObjectOfType<FinishZone>();
+        }
+
+#endif
     }
 }

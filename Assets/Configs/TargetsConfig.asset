@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d18b09257b54fa4396dd6838e49ad3f, type: 3}
   m_Name: TargetsConfig
   m_EditorClassIdentifier: 
-  <DefaultSpeed>k__BackingField: 3
   _targetVariantsData:
   - Variant: 2
     Sprites:

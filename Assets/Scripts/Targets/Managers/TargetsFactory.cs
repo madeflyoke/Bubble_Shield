@@ -1,18 +1,18 @@
 using Lean.Pool;
-using Targets;
+using Levels;
 using Targets.Configs;
 using Targets.Enums;
 using Targets.Utility;
 using UnityEngine;
 
-namespace Managers.Targets
+namespace Targets.Managers
 {
     public class TargetsFactory : MonoBehaviour
     {
         [SerializeField] private Target targetPrefab;
         [SerializeField] private TargetsConfig _targetsConfig;
         
-        public Target CreateTarget(TargetSpawnData spawnData)
+        public Target CreateTarget(TargetSpawnData spawnData, LevelTargetStats levelTargetStats)
         {
             var target = LeanPool.Spawn(targetPrefab, spawnData.Position, Quaternion.identity, spawnData.Parent);
             target.transform.localScale = spawnData.Scale;
@@ -20,7 +20,7 @@ namespace Managers.Targets
             {
                 Variant = spawnData.Variant,
                 Sprite = _targetsConfig.GetRandomSprite(spawnData.Variant),
-                Speed = _targetsConfig.DefaultSpeed
+                Stats = levelTargetStats
             });
             return target;
         }

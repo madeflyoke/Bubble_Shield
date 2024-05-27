@@ -10,7 +10,6 @@ namespace Targets.Configs
     [CreateAssetMenu(menuName = "Targets/Configs", fileName = "Config")]
     public class TargetsConfig : ScriptableObject
     {
-        [field: SerializeField] public float DefaultSpeed { get; private set; }
         [SerializeField] private List<TargetVariantsData> _targetVariantsData;
 
         public Sprite GetRandomSprite(TargetVariant variant)

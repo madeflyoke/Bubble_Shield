@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Targets.Enums;
 using UnityEngine;
 
-namespace Targets.Utility
+namespace Targets.Configs
 {
     [Serializable]
     public struct TargetVariantsData

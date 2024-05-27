@@ -13,5 +13,16 @@ namespace Targets.Tools
                 (items[i], items[pos]) = (items[pos], items[i]);
             }
         }
+        
+        public static void ShuffleWithoutLastRepeat<T>(this List<T> items, T previousLast)
+        {      
+            items.Shuffle();
+            
+            if (EqualityComparer<T>.Default.Equals(items[0], previousLast))
+            {
+                int pos = Random.Range(1, items.Count); 
+                (items[0], items[pos]) = (items[pos], items[0]);
+            }
+        }
     }
 }

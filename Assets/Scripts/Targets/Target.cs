@@ -3,6 +3,7 @@ using Targets.Enums;
 using Targets.Utility;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Targets
 {
@@ -25,7 +26,7 @@ namespace Targets
             _image.preserveAspect = true;
             SetSprite(_targetData.Sprite);
             _button.onClick.AddListener(OnButtonClicked);
-            _currentSpeed = targetData.Speed;
+            _currentSpeed = targetData.Stats.Speed * Random.Range(0.9f,1.3f);
         }
 
         private void SetSprite(Sprite sprite)

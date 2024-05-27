@@ -7,6 +7,6 @@ namespace Targets.Utility
     {
         public TargetVariant Variant;
         public Sprite Sprite;
-        public float Speed;
+        public LevelTargetStats Stats;
     }
 }

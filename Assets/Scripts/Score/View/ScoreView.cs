@@ -6,16 +6,16 @@ namespace Score.View
     public class ScoreView : MonoBehaviour
     {
         [SerializeField] private TMP_Text _scoreText;
-        [SerializeField] private TMP_Text _scoreRecordText;
+        [SerializeField] private TMP_Text _targetScoreText;
 
-        public void SetScoreText(int value)
+        public void SetCurrentScore(int value)
         {
             _scoreText.text = value.ToString();
         }
 
-        public void SetRecordScoreText(int value)
+        public void SetTargetScore(int value)
         {
-            _scoreRecordText.text = value.ToString();
+            _targetScoreText.text = value.ToString();
         }
     }
 }

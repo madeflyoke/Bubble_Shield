@@ -1,34 +1,30 @@
-using Managers.Targets;
-using Score.Model;
+using System;
+using Levels;
 using Score.View;
 using Targets;
 using Targets.Enums;
+using Targets.Managers;
 using UnityEngine;
 
 namespace Score.Controller
 {
     public class ScoreController : MonoBehaviour
     {
+        public event Action TargetScoreReached; 
+        
         [SerializeField] private TargetsController _targetsController;
 
         [SerializeField] private ScoreView _scoreView;
-        private ScoreData _scoreData;
         private int _currentScore;
+        private int _targetScore;
 
-        private void Awake()
+        public void Initialize(int targetScore)
         {
-            _scoreData = new ScoreData();
-            _scoreView.SetScoreText(0);
-            _scoreView.SetRecordScoreText(_scoreData.RecordScoreValue);
-        }
-
-        private void OnEnable()
-        {
+            _scoreView.SetCurrentScore(0);
+            _scoreView.SetTargetScore(targetScore);
+            _targetScore =targetScore;
+            
             _targetsController.TargetFinished += OnTargetFinished;
-        }
-        private void OnDisable()
-        {
-            _targetsController.TargetFinished -= OnTargetFinished;
         }
         
         private void OnTargetFinished(Target target)
@@ -45,12 +41,12 @@ namespace Score.Controller
             }
 
             _currentScore = Mathf.Clamp(_currentScore, 0, int.MaxValue);
-            _scoreView.SetScoreText(_currentScore);
+            _scoreView.SetCurrentScore(_currentScore);
             
-            if (_currentScore>_scoreData.RecordScoreValue)
+            if (_currentScore==_targetScore)
             {
-                _scoreData.SetRecordScoreValue(_currentScore,true);
-                _scoreView.SetRecordScoreText(_currentScore);
+                TargetScoreReached?.Invoke();
+                _targetsController.TargetFinished -= OnTargetFinished;
             }
         }
     }
