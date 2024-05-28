@@ -28,6 +28,7 @@ namespace Targets.Managers.Spawn
         
         private TargetsSpawnData _spawnData;
         private LevelTargetStats _targetStats;
+        private int _currentTargetIndex;
         
         public void Initialize(TargetsSpawnData spawnData, LevelTargetStats levelTargetStats)
         {
@@ -43,6 +44,8 @@ namespace Targets.Managers.Spawn
         
         private async void StartSpawnCycle()
         {
+            int allySpawnIndex = 0;
+
             while (true)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(_spawnData.TargetSpawnDelay), cancellationToken:_cts.Token);
@@ -65,16 +68,21 @@ namespace Targets.Managers.Spawn
                     }
                     
                     spawnPosition.y = newPosY;
-                  
-                    var target =_targetsFactory.CreateTarget(new TargetsFactory.TargetSpawnData()
-                    {
-                        Parent = spawnPoint,
-                        Position = spawnPosition,
-                        Scale = _targetCalculatedScale,
-                        Variant = Random.Range(0f,1f)<_spawnData.AllySpawnChance? TargetVariant.ALLY: TargetVariant.ENEMY
-                    }, _targetStats);
                     
-                    TargetSpawned?.Invoke(target);
+                    TargetVariant variant;
+                    
+                    if ( _currentTargetIndex == allySpawnIndex)
+                    {
+                        variant = TargetVariant.ALLY;
+                        allySpawnIndex += _spawnData.AvarageAllySpawnRatio + Random.Range(-1, 1);
+                    }
+                    else
+                    {
+                        variant = TargetVariant.ENEMY;
+                    }
+
+                    var target = SpawnTarget(spawnPoint, spawnPosition, variant);
+                    _currentTargetIndex++;
                     
                     if (i==0)
                     {
@@ -92,6 +100,20 @@ namespace Targets.Managers.Spawn
                 _lastSpawnPoint = spawnPoint;
                 _currentHighestElement = queueHighestElement;
             }
+        }
+
+        private Target SpawnTarget(Transform parent, Vector3 position, TargetVariant variant)
+        {
+            var target =_targetsFactory.CreateTarget(new TargetsFactory.TargetSpawnData()
+            {
+                Parent = parent,
+                Position = position,
+                Scale = _targetCalculatedScale,
+                Variant = variant
+            }, _targetStats);
+                    
+            TargetSpawned?.Invoke(target);
+            return target;
         }
         
         private void OnDisable()

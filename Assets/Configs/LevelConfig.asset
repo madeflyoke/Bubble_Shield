@@ -18,8 +18,8 @@ MonoBehaviour:
     TargetsSpawnData:
       CollumnsCount: 5
       TargetSpawnDelay: 1
-      TargetsPerSpawn: 5
-      AllySpawnChance: 0.4
+      TargetsPerSpawn: 1
+      AvarageAllySpawnRatio: 4
     levelTargetsStats:
       Speed: 3
   - Id: 1
@@ -28,6 +28,6 @@ MonoBehaviour:
       CollumnsCount: 5
       TargetSpawnDelay: 2
       TargetsPerSpawn: 5
-      AllySpawnChance: 0.2
+      AvarageAllySpawnRatio: 5
     levelTargetsStats:
       Speed: 1
