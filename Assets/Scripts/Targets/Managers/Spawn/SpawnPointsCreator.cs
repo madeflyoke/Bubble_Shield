@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -9,14 +8,19 @@ namespace Targets.Managers.Spawn
     {
         [SerializeField] private float _spawnHeight =6f;
         [SerializeField] private float _sidesSpawnPadding=0.75f;
-        [SerializeField] private RectTransform _spawnPointsHolder;
+        private Camera _mainCam;
         
-        public List<RectTransform> CreateSpawnPoints(int targetsCount, out Vector3 targetScale)
+        private void Awake()
         {
-            var spawnPoints = new List<RectTransform>();
+            _mainCam = Camera.main;
+        }
+        
+        public List<Vector3> CreateSpawnPoints(int targetsCount, RectTransform parent, out Vector3 targetScale)
+        {
+            var spawnPoints = new List<Vector3>();
             
-            var minX = Camera.main.ViewportToWorldPoint(new Vector3(0, 0f));
-            var maxX = Camera.main.ViewportToWorldPoint(new Vector3(1, 0f));
+            var minX = _mainCam.ViewportToWorldPoint(new Vector3(0, 0f));
+            var maxX = _mainCam.ViewportToWorldPoint(new Vector3(1, 0f));
             
             var leftPos = new Vector3(minX.x, _spawnHeight, 0f);
             var rightPos = new Vector3(maxX.x, _spawnHeight, 0f);
@@ -28,19 +32,14 @@ namespace Targets.Managers.Spawn
             for (int i = 0; i < targetsCount; i++)
             {
                 var pos = leftPos+ Vector3.right*step * i+Vector3.right*_sidesSpawnPadding;
-                pos.z = _spawnPointsHolder.transform.position.z;
-                var go = new GameObject();
-                go.transform.position = pos;
-                go.name = "SpawnPoint " + i;
-                var rt = go.AddComponent<RectTransform>();
-                go.transform.SetParent(_spawnPointsHolder);
-                spawnPoints.Add(rt);
+                pos.z = parent.transform.position.z;
+                spawnPoints.Add(pos);
             }
 
             return spawnPoints;
         }
         
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         private void OnDrawGizmosSelected()
         {

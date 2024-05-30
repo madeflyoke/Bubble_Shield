@@ -21,7 +21,10 @@ namespace Targets.Managers.Spawn
         
         [SerializeField] private TargetsFactory _targetsFactory;
         [SerializeField] private SpawnPointsCreator _spawnPointsCreator;
-        private List<RectTransform> _currentSpawnPoints;
+        [SerializeField] private RectTransform _targetsHolder;
+
+        private List<Vector3> _currentSpawnPoints;
+        private RectTransform _parent;
 
         private CancellationTokenSource _cts;
 
@@ -34,7 +37,7 @@ namespace Targets.Managers.Spawn
         {
             _cts = new CancellationTokenSource();
             
-            var spawnPoints = _spawnPointsCreator.CreateSpawnPoints(spawnData.CollumnsCount, out Vector3 targetCalculatedScale);
+            var spawnPoints = _spawnPointsCreator.CreateSpawnPoints(spawnData.CollumnsCount, _targetsHolder, out Vector3 targetCalculatedScale);
             _currentSpawnPoints = spawnPoints.ToList(); //copy
             
             _targetsFactory.SetCurrentSpecifications(levelTargetStats, targetCalculatedScale);
@@ -46,7 +49,7 @@ namespace Targets.Managers.Spawn
             int currentTargetIndex = 0; //prepare local scope variables
             int allyNextSpawnIndex = 0;
             Target currentHighestTarget =null;
-            RectTransform lastSpawnPoint = _currentSpawnPoints[^1]; 
+            Vector3 lastSpawnPoint = _currentSpawnPoints[^1]; 
 
             while (true)
             {
@@ -57,14 +60,13 @@ namespace Targets.Managers.Spawn
                 _currentSpawnPoints.ShuffleWithoutLastRepeat(lastSpawnPoint); //shuffle
 
                 Target iterationHighestElement = null;
-                RectTransform spawnPoint = null;
+                Vector3 spawnPoint = default;
                 
                 for (int i = 0; i < spawnData.TargetsPerSpawn; i++)
                 {
                     spawnPoint = _currentSpawnPoints[i];
-                    var spawnPosition = spawnPoint.position;
                     
-                    spawnPosition.y = GetCorrectedYPos(currentHighestTarget, spawnPosition.y, targetScaleHeight); //spawn guarantee upper than highest target
+                    spawnPoint.y = GetCorrectedYPos(currentHighestTarget, spawnPoint.y, targetScaleHeight); //spawn guarantee upper than highest target
                     
                     TargetVariant variant;
                     if (currentTargetIndex == allyNextSpawnIndex)
@@ -77,7 +79,7 @@ namespace Targets.Managers.Spawn
                         variant = TargetVariant.ENEMY;
                     }
 
-                    var target = SpawnTarget(spawnPoint, spawnPosition, variant);
+                    var target = SpawnTarget(spawnPoint, variant);
                     currentTargetIndex++;
                     
                     if (i==0)
@@ -86,7 +88,7 @@ namespace Targets.Managers.Spawn
                     }
                     else
                     {
-                        if (spawnPosition.y>iterationHighestElement.transform.position.y)
+                        if (spawnPoint.y>iterationHighestElement.transform.position.y)
                         {
                             iterationHighestElement = target;
                         }
@@ -111,11 +113,11 @@ namespace Targets.Managers.Spawn
             return newPosY;
         }
         
-        private Target SpawnTarget(Transform parent, Vector3 position, TargetVariant variant)
+        private Target SpawnTarget(Vector3 position, TargetVariant variant)
         {
             var target =_targetsFactory.CreateTarget(new TargetsFactory.TargetSpawnData()
             {
-                Parent = parent,
+                Parent = _targetsHolder,
                 Position = position,
                 Variant = variant
             });
