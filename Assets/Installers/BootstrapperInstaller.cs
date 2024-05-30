@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Installers
 {
-    public class ManagersInstaller : MonoInstaller
+    public class BootstrapperInstaller : MonoInstaller
     {
         [SerializeField] private Bootstrapper _bootstrapper;
         

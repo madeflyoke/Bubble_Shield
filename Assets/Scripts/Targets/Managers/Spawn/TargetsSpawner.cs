@@ -3,78 +3,74 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Signals;
 using Targets.Enums;
 using Targets.Tools;
 using Targets.Utility;
 using UnityEngine;
+using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Targets.Managers.Spawn
 {
     public class TargetsSpawner : MonoBehaviour
     {
+        [Inject] private SignalBus _signalBus;
+        
         public event Action<Target> TargetSpawned;
         
         [SerializeField] private TargetsFactory _targetsFactory;
         [SerializeField] private SpawnPointsCreator _spawnPointsCreator;
-        private List<RectTransform> _spawnPoints;
-        private List<RectTransform> _spawnPointsShuffled;
+        private List<RectTransform> _currentSpawnPoints;
 
-        private Vector3 _targetCalculatedScale;
-        private Target _currentHighestElement;
         private CancellationTokenSource _cts;
 
-        private RectTransform _lastSpawnPoint;
-        
-        private TargetsSpawnData _spawnData;
-        private LevelTargetStats _targetStats;
-        private int _currentTargetIndex;
-        
+        private void Start()
+        {
+            _signalBus.Subscribe<LevelSelectorCallSignal>(ResetSpawner);
+        }
+
         public void Initialize(TargetsSpawnData spawnData, LevelTargetStats levelTargetStats)
         {
             _cts = new CancellationTokenSource();
             
-            _spawnData = spawnData;
-            _targetStats = levelTargetStats;
-            _spawnPoints = _spawnPointsCreator.CreateSpawnPoints(spawnData.CollumnsCount, out _targetCalculatedScale);
-            _spawnPointsShuffled = _spawnPoints.ToList(); //copy
-            _lastSpawnPoint = _spawnPointsShuffled[^1];
-            StartSpawnCycle();
+            var spawnPoints = _spawnPointsCreator.CreateSpawnPoints(spawnData.CollumnsCount, out Vector3 targetCalculatedScale);
+            _currentSpawnPoints = spawnPoints.ToList(); //copy
+            
+            _targetsFactory.SetCurrentSpecifications(levelTargetStats, targetCalculatedScale);
+            StartSpawnCycle(spawnData, targetCalculatedScale.y);
         }
         
-        private async void StartSpawnCycle()
+        private async void StartSpawnCycle(TargetsSpawnData spawnData, float targetScaleHeight)
         {
-            int allySpawnIndex = 0;
+            int currentTargetIndex = 0; //prepare local scope variables
+            int allyNextSpawnIndex = 0;
+            Target currentHighestTarget =null;
+            RectTransform lastSpawnPoint = _currentSpawnPoints[^1]; 
 
             while (true)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(_spawnData.TargetSpawnDelay), cancellationToken:_cts.Token);
+                var isCanceled = await UniTask.Delay(TimeSpan.FromSeconds(spawnData.TargetSpawnDelay), cancellationToken:_cts.Token).SuppressCancellationThrow();
+                if (isCanceled)
+                    return;
                 
-                _spawnPointsShuffled.ShuffleWithoutLastRepeat(_lastSpawnPoint);
+                _currentSpawnPoints.ShuffleWithoutLastRepeat(lastSpawnPoint); //shuffle
 
-                Target queueHighestElement = null;
+                Target iterationHighestElement = null;
                 RectTransform spawnPoint = null;
                 
-                for (int i = 0; i < _spawnData.TargetsPerSpawn; i++)
+                for (int i = 0; i < spawnData.TargetsPerSpawn; i++)
                 {
-                    spawnPoint = _spawnPointsShuffled[i];
+                    spawnPoint = _currentSpawnPoints[i];
                     var spawnPosition = spawnPoint.position;
-                    var newPosY = spawnPosition.y + Random.Range(-1f, 1f);
                     
-                    if (_currentHighestElement != null) //guarantee to element will be higher than previous
-                    {
-                        var limitedY = _currentHighestElement.transform.position.y + _targetCalculatedScale.y;
-                        newPosY = Mathf.Clamp(newPosY, limitedY, newPosY);
-                    }
-                    
-                    spawnPosition.y = newPosY;
+                    spawnPosition.y = GetCorrectedYPos(currentHighestTarget, spawnPosition.y, targetScaleHeight); //spawn guarantee upper than highest target
                     
                     TargetVariant variant;
-                    
-                    if ( _currentTargetIndex == allySpawnIndex)
+                    if (currentTargetIndex == allyNextSpawnIndex)
                     {
                         variant = TargetVariant.ALLY;
-                        allySpawnIndex += _spawnData.AvarageAllySpawnRatio + Random.Range(-1, 1);
+                        allyNextSpawnIndex += spawnData.AvarageAllySpawnRatio + Random.Range(-1, 1);
                     }
                     else
                     {
@@ -82,38 +78,56 @@ namespace Targets.Managers.Spawn
                     }
 
                     var target = SpawnTarget(spawnPoint, spawnPosition, variant);
-                    _currentTargetIndex++;
+                    currentTargetIndex++;
                     
                     if (i==0)
                     {
-                        queueHighestElement = target;
+                        iterationHighestElement = target;
                     }
                     else
                     {
-                        if (spawnPosition.y>queueHighestElement.transform.position.y)
+                        if (spawnPosition.y>iterationHighestElement.transform.position.y)
                         {
-                            queueHighestElement = target;
+                            iterationHighestElement = target;
                         }
                     }
                 }
 
-                _lastSpawnPoint = spawnPoint;
-                _currentHighestElement = queueHighestElement;
+                lastSpawnPoint = spawnPoint;
+                currentHighestTarget = iterationHighestElement;
             }
         }
 
+        private float GetCorrectedYPos(Target highestTarget, float targetYPos, float targetScaleHeight)
+        {
+            var newPosY = targetYPos + Random.Range(-1f, 1f);
+                    
+            if (highestTarget != null)
+            {
+                var limitedY = highestTarget.transform.position.y + targetScaleHeight;
+                newPosY = Mathf.Clamp(newPosY, limitedY, newPosY);
+            }
+
+            return newPosY;
+        }
+        
         private Target SpawnTarget(Transform parent, Vector3 position, TargetVariant variant)
         {
             var target =_targetsFactory.CreateTarget(new TargetsFactory.TargetSpawnData()
             {
                 Parent = parent,
                 Position = position,
-                Scale = _targetCalculatedScale,
                 Variant = variant
-            }, _targetStats);
+            });
                     
             TargetSpawned?.Invoke(target);
             return target;
+        }
+
+        private void ResetSpawner(LevelSelectorCallSignal _)
+        {
+            _cts?.Cancel();
+            
         }
         
         private void OnDisable()

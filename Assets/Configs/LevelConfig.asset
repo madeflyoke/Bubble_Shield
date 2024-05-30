@@ -20,8 +20,8 @@ MonoBehaviour:
       TargetSpawnDelay: 1
       TargetsPerSpawn: 1
       AvarageAllySpawnRatio: 4
-    levelTargetsStats:
-      Speed: 3
+    LevelTargetsStats:
+      Speed: 2
   - Id: 1
     TargetScore: 30
     TargetsSpawnData:
@@ -29,5 +29,5 @@ MonoBehaviour:
       TargetSpawnDelay: 2
       TargetsPerSpawn: 5
       AvarageAllySpawnRatio: 5
-    levelTargetsStats:
-      Speed: 1
+    LevelTargetsStats:
+      Speed: 2

@@ -1,41 +1,51 @@
 using System;
-using Levels;
 using Score.View;
+using Signals;
 using Targets;
 using Targets.Enums;
 using Targets.Managers;
 using UnityEngine;
+using Zenject;
 
 namespace Score.Controller
 {
     public class ScoreController : MonoBehaviour
     {
+        [Inject] private SignalBus _signalBus;
+        
         public event Action TargetScoreReached; 
         
         [SerializeField] private TargetsController _targetsController;
-
         [SerializeField] private ScoreView _scoreView;
         private int _currentScore;
         private int _targetScore;
 
-        public void Initialize(int targetScore)
+        private void Start()
         {
-            _scoreView.SetCurrentScore(0);
-            _scoreView.SetTargetScore(targetScore);
+            _signalBus.Subscribe<LevelStartedSignal>(Initialize);
+        }
+
+        private void Initialize(LevelStartedSignal signal)
+        {         
+            var targetScore = signal.LevelData.TargetScore;
+            
+            _currentScore = 0;
             _targetScore =targetScore;
+            
+            _scoreView.SetCurrentScore(_currentScore);
+            _scoreView.SetTargetScore(_targetScore);
             
             _targetsController.TargetFinished += OnTargetFinished;
         }
         
         private void OnTargetFinished(Target target)
         {
-            Debug.LogWarning(target.Variant);
             switch (target.Variant)
             {
                 case TargetVariant.ENEMY:
                     _currentScore--; 
                     break;
-                case TargetVariant.ALLY: //1 move to config "score per ..."?
+                case TargetVariant.ALLY: //move to config "score per ..."?
                     _currentScore++;
                     break;
             }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Targets.Managers.Spawn
@@ -8,7 +10,7 @@ namespace Targets.Managers.Spawn
         [SerializeField] private float _spawnHeight =6f;
         [SerializeField] private float _sidesSpawnPadding=0.75f;
         [SerializeField] private RectTransform _spawnPointsHolder;
-
+        
         public List<RectTransform> CreateSpawnPoints(int targetsCount, out Vector3 targetScale)
         {
             var spawnPoints = new List<RectTransform>();
@@ -37,5 +39,25 @@ namespace Targets.Managers.Spawn
 
             return spawnPoints;
         }
+        
+        #if UNITY_EDITOR
+
+        private void OnDrawGizmosSelected()
+        {
+            var minX = Camera.main.ViewportToWorldPoint(new Vector3(0, 0f));
+            var maxX = Camera.main.ViewportToWorldPoint(new Vector3(1, 0f));
+            
+            var leftPos = new Vector3(minX.x, _spawnHeight, 0f);
+            var rightPos = new Vector3(maxX.x, _spawnHeight, 0f);
+            
+            Handles.color = Color.yellow;
+            var leftSpawnPadding = leftPos + Vector3.right * _sidesSpawnPadding;
+            var rightSpawnPadding = rightPos - Vector3.right * _sidesSpawnPadding;
+            Handles.DrawLine(leftSpawnPadding-Vector3.up, leftSpawnPadding+Vector3.up);
+            Handles.DrawLine(rightSpawnPadding-Vector3.up, rightSpawnPadding+Vector3.up);
+            Handles.DrawLine(leftSpawnPadding, rightSpawnPadding);
+        }
+
+#endif
     }
 }

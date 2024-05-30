@@ -10,6 +10,6 @@ namespace Levels
         public int Id;
         public int TargetScore;
         public TargetsSpawnData TargetsSpawnData;
-        public LevelTargetStats levelTargetsStats;
+        public LevelTargetStats LevelTargetsStats;
     }
 }

@@ -2,39 +2,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lean.Pool;
+using Signals;
 using Targets.Managers.Spawn;
-using Targets.Utility;
 using UnityEngine;
+using Zenject;
 
 namespace Targets.Managers
 {
     public class TargetsController : MonoBehaviour
     {
+        [Inject] private SignalBus _signalBus;
+        
         public event Action<Target> TargetFinished;
         
         [SerializeField] private TargetsSpawner _targetsSpawner;
         [SerializeField] private FinishZone _finishZone;
         private List<Target> _currentTargets;
-        
-        public void Initialize(TargetsSpawnData spawnData, LevelTargetStats levelTargetStats)
+
+        private void Start()
+        {
+            _signalBus.Subscribe<LevelStartedSignal>(Initialize);
+            _signalBus.Subscribe<LevelSelectorCallSignal>(ResetController);
+        }
+
+        private void Initialize(LevelStartedSignal signal)
         {
             _currentTargets = new List<Target>();
             Target.TargetClicked += OnTargetClicked;
-            _targetsSpawner.Initialize(spawnData, levelTargetStats);
-        }
-
-        private void OnEnable()
-        {
+            _targetsSpawner.Initialize(signal.LevelData.TargetsSpawnData, signal.LevelData.LevelTargetsStats);
+            
             _targetsSpawner.TargetSpawned += OnTargetSpawned;
             _finishZone.TargetTriggeredFinish += OnTargetTriggeredFinish;
         }
         
-        private void OnDisable()
-        {
-            _targetsSpawner.TargetSpawned -= OnTargetSpawned;
-            _finishZone.TargetTriggeredFinish -= OnTargetTriggeredFinish;
-        }
-
         private void OnTargetSpawned(Target target)
         {
             _currentTargets.Add(target);
@@ -59,8 +59,21 @@ namespace Targets.Managers
                 LeanPool.Despawn(target);
             }
         }
+
+        private void ResetController(LevelSelectorCallSignal _)
+        {
+            for (int i = 0, count = _currentTargets.Count; i < count; i++)
+            {
+                LeanPool.Despawn(_currentTargets[i]);
+            }
+            
+            _currentTargets = null;
+            Target.TargetClicked -= OnTargetClicked;
+            _targetsSpawner.TargetSpawned -= OnTargetSpawned;
+            _finishZone.TargetTriggeredFinish -= OnTargetTriggeredFinish;
+        }
         
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         private void OnValidate()
         {

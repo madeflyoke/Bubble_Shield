@@ -7,6 +7,8 @@ namespace Levels.Configs
     [CreateAssetMenu(menuName = "Levels/LevelConfig", fileName = "LevelConfig")]
     public class LevelsConfig : ScriptableObject, ISerializationCallbackReceiver
     {
+        public int LevelsCount => _levels.Count;
+        
         [SerializeField] private List<LevelData> _levels;
 
         public LevelData GetLevelData(int levelId)
@@ -14,7 +16,7 @@ namespace Levels.Configs
             return _levels.FirstOrDefault(x => x.Id == levelId);
         }
         
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         public void OnBeforeSerialize()
         {
@@ -31,7 +33,7 @@ namespace Levels.Configs
            
         }
         
-        #endif
+#endif
         
      
     }

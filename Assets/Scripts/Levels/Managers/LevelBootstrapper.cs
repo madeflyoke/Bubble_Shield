@@ -1,23 +1,29 @@
 using System;
 using Levels.Configs;
 using Score.Controller;
+using Signals;
 using Targets.Managers;
+using UI.LevelSelection;
 using UnityEngine;
+using Zenject;
 
 namespace Levels.Managers
 {
     public class LevelBootstrapper : MonoBehaviour
     {
-        [SerializeField] private TargetsController _targetsController;
-        [SerializeField] private ScoreController _scoreController;
+        [Inject] private SignalBus _signalBus;
+        
         [SerializeField] private LevelsConfig _levelsConfig;
-        [SerializeField] private int _id;
 
         public void Start()
         {
-            var levelData = _levelsConfig.GetLevelData(_id);
-            _targetsController.Initialize(levelData.TargetsSpawnData, levelData.levelTargetsStats);
-            _scoreController.Initialize(levelData.TargetScore);
+            _signalBus.Subscribe<LevelSelectedSignal>(OnLevelSelected);
+        }
+
+        private void OnLevelSelected(LevelSelectedSignal signal)
+        {
+            var levelData = _levelsConfig.GetLevelData(signal.LevelId);
+            _signalBus.Fire(new LevelStartedSignal(levelData));
         }
     }
 }

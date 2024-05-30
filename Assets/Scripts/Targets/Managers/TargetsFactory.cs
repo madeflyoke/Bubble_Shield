@@ -1,5 +1,4 @@
 using Lean.Pool;
-using Levels;
 using Targets.Configs;
 using Targets.Enums;
 using Targets.Utility;
@@ -9,18 +8,28 @@ namespace Targets.Managers
 {
     public class TargetsFactory : MonoBehaviour
     {
-        [SerializeField] private Target targetPrefab;
+        public Vector3 TargetScale { get; private set; }
+        
+        [SerializeField] private Target _targetPrefab;
         [SerializeField] private TargetsConfig _targetsConfig;
         
-        public Target CreateTarget(TargetSpawnData spawnData, LevelTargetStats levelTargetStats)
+        private LevelTargetStats _currentLevelTargetsStats;
+        
+        public void SetCurrentSpecifications(LevelTargetStats levelTargetStats, Vector3 targetScale = default)
         {
-            var target = LeanPool.Spawn(targetPrefab, spawnData.Position, Quaternion.identity, spawnData.Parent);
-            target.transform.localScale = spawnData.Scale;
+            _currentLevelTargetsStats = levelTargetStats;
+            TargetScale = targetScale;
+        }
+        
+        public Target CreateTarget(TargetSpawnData spawnData)
+        {
+            var target = LeanPool.Spawn(_targetPrefab, spawnData.Position, Quaternion.identity, spawnData.Parent);
+            target.transform.localScale = TargetScale;
             target.Initialize(new TargetData()
             {
                 Variant = spawnData.Variant,
                 Sprite = _targetsConfig.GetRandomSprite(spawnData.Variant),
-                Stats = levelTargetStats
+                Stats = _currentLevelTargetsStats
             });
             return target;
         }
@@ -29,7 +38,6 @@ namespace Targets.Managers
         {
             public Transform Parent;
             public Vector3 Position;
-            public Vector3 Scale;
             public TargetVariant Variant;
         }
     }

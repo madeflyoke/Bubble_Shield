@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5619029341628942419}
   - component: {fileID: 933890302977956453}
   m_Layer: 0
-  m_Name: '[TARGETS_MANAGERS]'
+  m_Name: TargetsManagers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a4525fc00d2ab1419aa2db9252e3d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPrefab: {fileID: 9168553859601371465, guid: 815b882f230aec349982f1f3cf7399d7, type: 3}
+  _targetPrefab: {fileID: 9168553859601371465, guid: 815b882f230aec349982f1f3cf7399d7, type: 3}
   _targetsConfig: {fileID: 11400000, guid: 637a6c2891dc12048be0861661c2a42c, type: 2}
 --- !u!114 &5619029341628942419
 MonoBehaviour:
