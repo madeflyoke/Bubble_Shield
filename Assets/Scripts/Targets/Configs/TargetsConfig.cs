@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Targets.Enums;
-using Targets.Utility;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,8 +13,16 @@ namespace Targets.Configs
 
         public Sprite GetRandomSprite(TargetVariant variant)
         {
-            var sprites = _targetVariantsData.FirstOrDefault(x => x.Variant == variant).Sprites;
-            return sprites[Random.Range(0, sprites.Count)];
+            var configDatas = _targetVariantsData.FirstOrDefault(x => x.Variant == variant).ConfigDatas;
+            return configDatas[Random.Range(0, configDatas.Count)].Sprite;
+        }
+
+        public Color GetRelatedTargetColor(Sprite sprite)
+        {
+            TargetConfigData configData = _targetVariantsData
+                .SelectMany(data => data.ConfigDatas)
+                .FirstOrDefault(config => config.Sprite == sprite);
+            return configData.RelatedColor;
         }
     }
 }

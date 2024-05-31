@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Services;
 using Services.Interfaces;
 using UnityEngine;
 
-namespace Managers
+namespace Services
 {
     public class ServicesHolder : IDisposable
     {

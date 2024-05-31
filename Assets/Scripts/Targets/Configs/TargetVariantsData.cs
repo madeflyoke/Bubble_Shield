@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Targets.Enums;
-using UnityEngine;
 
 namespace Targets.Configs
 {
@@ -9,6 +8,6 @@ namespace Targets.Configs
     public struct TargetVariantsData
     {
         public TargetVariant Variant;
-        public List<Sprite> Sprites;
+        public List<TargetConfigData> ConfigDatas;
     }
 }

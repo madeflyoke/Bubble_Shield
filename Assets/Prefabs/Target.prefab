@@ -87,8 +87,10 @@ GameObject:
   - component: {fileID: 1292295792517513583}
   - component: {fileID: 7196835905511643739}
   - component: {fileID: 5659530422556386856}
-  - component: {fileID: 9168553859601371465}
   - component: {fileID: 2103628760857951936}
+  - component: {fileID: 9168553859601371465}
+  - component: {fileID: 253219969911679105}
+  - component: {fileID: 7249596635525247212}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -198,21 +200,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &9168553859601371465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8239208674275991769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 588e40bd7bdcc3b45aff850bb6135710, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Collider>k__BackingField: {fileID: 2103628760857951936}
-  _image: {fileID: 4494038582528178610}
-  _button: {fileID: 5659530422556386856}
 --- !u!61 &2103628760857951936
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -258,3 +245,45 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &9168553859601371465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8239208674275991769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 588e40bd7bdcc3b45aff850bb6135710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Collider>k__BackingField: {fileID: 2103628760857951936}
+  _viewComponent: {fileID: 7249596635525247212}
+  _effectComponent: {fileID: 253219969911679105}
+--- !u!114 &253219969911679105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8239208674275991769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a29b3972970bd74db392054a743d030, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onDeathParticlePrefab: {fileID: 4531740433225856049, guid: 8be4cf68f5b63eb4ea9e125bd3d02e15, type: 3}
+--- !u!114 &7249596635525247212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8239208674275991769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa632bb7ec17974ea472ebd829ea6d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _image: {fileID: 4494038582528178610}
+  _button: {fileID: 5659530422556386856}

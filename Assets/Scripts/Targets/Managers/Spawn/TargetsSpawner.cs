@@ -5,9 +5,9 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Signals;
 using Targets.Enums;
-using Targets.Tools;
 using Targets.Utility;
 using UnityEngine;
+using Utility;
 using Zenject;
 using Random = UnityEngine.Random;
 

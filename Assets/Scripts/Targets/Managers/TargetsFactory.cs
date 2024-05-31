@@ -25,10 +25,14 @@ namespace Targets.Managers
         {
             var target = LeanPool.Spawn(_targetPrefab, spawnData.Position, Quaternion.identity, spawnData.Parent);
             target.transform.localScale = TargetScale;
+            var sprite = _targetsConfig.GetRandomSprite(spawnData.Variant);
+            var relatedColor = _targetsConfig.GetRelatedTargetColor(sprite);
+            
             target.Initialize(new TargetData()
             {
                 Variant = spawnData.Variant,
-                Sprite = _targetsConfig.GetRandomSprite(spawnData.Variant),
+                Sprite = sprite,
+                RelatedColor =  relatedColor,
                 Stats = _currentLevelTargetsStats
             });
             return target;

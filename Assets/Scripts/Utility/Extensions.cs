@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Targets.Tools
+namespace Utility
 {
     public static class Extensions
     {

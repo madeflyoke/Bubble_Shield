@@ -1,8 +1,6 @@
-using System;
-using EasyButtons;
 using UnityEngine;
 
-namespace Targets
+namespace Targets.Managers
 {
     public class TargetsHolder : MonoBehaviour
     {
