@@ -2,19 +2,19 @@ using Services;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace Managers
 {
     public class Bootstrapper : MonoBehaviour
     {
-        public ServicesHolder ServicesHolder { get; private set; }
-
+        [Inject] private ServicesHolder _servicesHolder;
+        
         [SerializeField] private string _mainSceneName;
 
         private void Awake()
         {
-            ServicesHolder = new ServicesHolder();
-            ServicesHolder.InitializeServices(LoadMainScene);
+            _servicesHolder.InitializeServices(LoadMainScene);
         }
         
         private void LoadMainScene()
@@ -24,10 +24,9 @@ namespace Managers
 
         private void OnDestroy()
         {
-            ServicesHolder?.Dispose();
+            _servicesHolder?.Dispose();
         }
-
-
+        
 #if UNITY_EDITOR
 
         [SerializeField] private SceneAsset EDITOR_mainScene;

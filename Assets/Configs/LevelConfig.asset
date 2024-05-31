@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _levels:
   - Id: 0
-    TargetScore: 20
+    TargetScore: 3
     TargetsSpawnData:
       CollumnsCount: 5
       TargetSpawnDelay: 1

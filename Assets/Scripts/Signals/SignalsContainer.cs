@@ -26,4 +26,9 @@ namespace Signals
             LevelData = levelData;
         }
     }
+
+    public struct LevelCompletedSignal
+    {
+        
+    }
 }

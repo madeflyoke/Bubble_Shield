@@ -1,24 +1,26 @@
+using System;
+using System.Collections.Generic;
 using Managers;
 using Services;
 using Signals;
+using UI.Screens.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace UI
 {
-    public class PausePopup : MonoBehaviour
+    public class LevelCompletePopup : MonoBehaviour, IScreen
     {
         [Inject] private SignalBus _signalBus;
         [Inject] private ServicesHolder _servicesHolder;
-        
+
+        [SerializeField] private List<FinishStar> _finishStars;
         [SerializeField] private Button _backToSelectorButton;
-        [SerializeField] private Button _closeButton;
         
         public void Show()
         {
             _backToSelectorButton.onClick.AddListener(BackToSelector);
-            _closeButton.onClick.AddListener(Hide);
             _servicesHolder.GetService<PauseService>().SetPause(true);
             gameObject.SetActive(true);
         }
@@ -28,13 +30,25 @@ namespace UI
             gameObject.SetActive(false);
             _servicesHolder.GetService<PauseService>().SetPause(false);
             _backToSelectorButton.onClick.RemoveListener(BackToSelector);
-            _closeButton.onClick.RemoveListener(Hide);
         }
         
         private void BackToSelector()
         {
             _signalBus.Fire<LevelSelectorCallSignal>();
             Hide();
+        }
+
+        [Serializable]
+        public class FinishStar
+        {
+            public Image OnSprite;
+            public Image OffSprite;
+
+            public void SetActive(bool isActive)
+            {
+                OnSprite.gameObject.SetActive(isActive);
+                OffSprite.gameObject.SetActive(!isActive);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Managers;
 using Services.Interfaces;
 using UnityEngine;
 
@@ -27,7 +28,9 @@ namespace Services
             }
             
             _services = new Dictionary<Type, IService>();
-            AddService<YandexService>();
+            //add all services below
+            AddService<YandexService>(); 
+            AddService<PauseService>();
             
             _cts = new CancellationTokenSource();
 
@@ -42,7 +45,7 @@ namespace Services
             _isInitialized = true;
         }
         
-        private TService GetService<TService>() where TService: IService
+        public TService GetService<TService>() where TService: IService
         {
             return (TService) _services[typeof(TService)];
         }

@@ -13,8 +13,6 @@ namespace Score.Controller
     {
         [Inject] private SignalBus _signalBus;
         
-        public event Action TargetScoreReached; 
-        
         [SerializeField] private TargetsController _targetsController;
         [SerializeField] private ScoreView _scoreView;
         private int _currentScore;
@@ -55,7 +53,7 @@ namespace Score.Controller
             
             if (_currentScore==_targetScore)
             {
-                TargetScoreReached?.Invoke();
+                _signalBus.Fire<LevelCompletedSignal>();
                 _targetsController.TargetFinished -= OnTargetFinished;
             }
         }
