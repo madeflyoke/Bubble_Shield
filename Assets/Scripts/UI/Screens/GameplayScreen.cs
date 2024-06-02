@@ -22,9 +22,9 @@ namespace UI.Screens
             _signalBus.Subscribe<LevelCompletedSignal>(OnLevelCompleted);
         }
 
-        private void OnLevelCompleted(LevelCompletedSignal _)
+        private void OnLevelCompleted(LevelCompletedSignal signal)
         {
-            ShowLevelCompletePopup();
+            ShowLevelCompletePopup(signal);
         }
 
         public void Show()
@@ -43,9 +43,9 @@ namespace UI.Screens
             _pausePopup.Show();
         }
 
-        private void ShowLevelCompletePopup()
+        private void ShowLevelCompletePopup(LevelCompletedSignal signal)
         {
-            _levelCompletePopup.Show();
+            _levelCompletePopup.Show(signal);
         } 
     }
 }

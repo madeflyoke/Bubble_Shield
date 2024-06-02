@@ -1,9 +1,5 @@
-using System;
 using Levels.Configs;
-using Score.Controller;
 using Signals;
-using Targets.Managers;
-using UI.LevelSelection;
 using UnityEngine;
 using Zenject;
 
@@ -13,17 +9,26 @@ namespace Levels.Managers
     {
         [Inject] private SignalBus _signalBus;
         
+        public LevelData CurrentLevelData { get; private set; }
+        
         [SerializeField] private LevelsConfig _levelsConfig;
 
         public void Start()
         {
             _signalBus.Subscribe<LevelSelectedSignal>(OnLevelSelected);
+            _signalBus.Subscribe<CallOnRestartLevel>(RestartCurrentLevel);
         }
 
         private void OnLevelSelected(LevelSelectedSignal signal)
         {
             var levelData = _levelsConfig.GetLevelData(signal.LevelId);
+            CurrentLevelData = levelData;
             _signalBus.Fire(new LevelStartedSignal(levelData));
+        }
+
+        private void RestartCurrentLevel()
+        {
+            _signalBus.Fire(new LevelStartedSignal(CurrentLevelData));
         }
     }
 }

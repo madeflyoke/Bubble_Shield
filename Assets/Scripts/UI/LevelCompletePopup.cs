@@ -1,26 +1,35 @@
-using System;
 using System.Collections.Generic;
 using Managers;
+using Score.Utility;
 using Services;
 using Signals;
-using UI.Screens.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace UI
 {
-    public class LevelCompletePopup : MonoBehaviour, IScreen
+    public class LevelCompletePopup : MonoBehaviour
     {
         [Inject] private SignalBus _signalBus;
         [Inject] private ServicesHolder _servicesHolder;
 
-        [SerializeField] private List<FinishStar> _finishStars;
-        [SerializeField] private Button _backToSelectorButton;
-        
-        public void Show()
+        [SerializeField] private List<LevelStar> _levelStars;
+        [SerializeField] private BackToLevelSelectorButton _backToSelectorButton;
+        [SerializeField] private Button _restartLevelButton;
+
+        public void Show(LevelCompletedSignal signal)
         {
-            _backToSelectorButton.onClick.AddListener(BackToSelector);
+            _levelStars.ForEach(x=>x.SetActive(false));
+            var starsCount = ScoreUtilities.GetStarsCountByScore(signal.LevelData.TargetScore, signal.WrongScoreAnswers,
+                _levelStars.Count);
+            for (int i = 0; i < starsCount; i++)
+            {
+                _levelStars[i].SetActive(true);
+            }
+            
+            _backToSelectorButton.Enable(Hide);
+            _restartLevelButton.onClick.AddListener(RestartLevel);
             _servicesHolder.GetService<PauseService>().SetPause(true);
             gameObject.SetActive(true);
         }
@@ -29,26 +38,15 @@ namespace UI
         {
             gameObject.SetActive(false);
             _servicesHolder.GetService<PauseService>().SetPause(false);
-            _backToSelectorButton.onClick.RemoveListener(BackToSelector);
+            _backToSelectorButton.Disable();
+            _restartLevelButton.onClick.RemoveListener(RestartLevel);
         }
         
-        private void BackToSelector()
+        private void RestartLevel()
         {
-            _signalBus.Fire<LevelSelectorCallSignal>();
+            _signalBus.Fire<LevelResetSignal>();
+            _signalBus.Fire<CallOnRestartLevel>();
             Hide();
-        }
-
-        [Serializable]
-        public class FinishStar
-        {
-            public Image OnSprite;
-            public Image OffSprite;
-
-            public void SetActive(bool isActive)
-            {
-                OnSprite.gameObject.SetActive(isActive);
-                OffSprite.gameObject.SetActive(!isActive);
-            }
         }
     }
 }

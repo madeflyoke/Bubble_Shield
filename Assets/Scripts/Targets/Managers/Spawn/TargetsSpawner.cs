@@ -27,12 +27,7 @@ namespace Targets.Managers.Spawn
         private RectTransform _parent;
 
         private CancellationTokenSource _cts;
-
-        private void Start()
-        {
-            _signalBus.Subscribe<LevelSelectorCallSignal>(ResetSpawner);
-        }
-
+        
         public void Initialize(TargetsSpawnData spawnData, LevelTargetStats levelTargetStats)
         {
             _cts = new CancellationTokenSource();
@@ -126,10 +121,9 @@ namespace Targets.Managers.Spawn
             return target;
         }
 
-        private void ResetSpawner(LevelSelectorCallSignal _)
+        public void ResetSpawner()
         {
             _cts?.Cancel();
-            
         }
         
         private void OnDisable()

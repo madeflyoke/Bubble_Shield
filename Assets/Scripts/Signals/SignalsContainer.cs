@@ -12,7 +12,17 @@ namespace Signals
         }
     }
 
+    public struct LevelResetSignal
+    {
+        
+    }
+    
     public struct LevelSelectorCallSignal
+    {
+        
+    }
+
+    public struct CallOnRestartLevel
     {
         
     }
@@ -29,6 +39,13 @@ namespace Signals
 
     public struct LevelCompletedSignal
     {
-        
+        public readonly LevelData LevelData;
+        public readonly int WrongScoreAnswers;
+
+        public LevelCompletedSignal(LevelData levelData, int wrongScoreAnswers)
+        {
+            LevelData = levelData;
+            WrongScoreAnswers = wrongScoreAnswers;
+        }
     }
 }

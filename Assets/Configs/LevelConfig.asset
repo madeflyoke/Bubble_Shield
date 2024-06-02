@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _levels:
   - Id: 0
-    TargetScore: 3
+    TargetScore: 5
     TargetsSpawnData:
       CollumnsCount: 5
       TargetSpawnDelay: 1
-      TargetsPerSpawn: 1
+      TargetsPerSpawn: 2
       AvarageAllySpawnRatio: 4
     LevelTargetsStats:
       Speed: 2

@@ -1,4 +1,5 @@
-using System;
+using Levels;
+using Levels.Managers;
 using Score.View;
 using Signals;
 using Targets;
@@ -15,8 +16,11 @@ namespace Score.Controller
         
         [SerializeField] private TargetsController _targetsController;
         [SerializeField] private ScoreView _scoreView;
+        private LevelData _currentLevelData;
+        
         private int _currentScore;
         private int _targetScore;
+        private int _wrongAnswersScore;
 
         private void Start()
         {
@@ -24,10 +28,12 @@ namespace Score.Controller
         }
 
         private void Initialize(LevelStartedSignal signal)
-        {         
+        {
+            _currentLevelData = signal.LevelData;
             var targetScore = signal.LevelData.TargetScore;
             
             _currentScore = 0;
+            _wrongAnswersScore = 0;
             _targetScore =targetScore;
             
             _scoreView.SetCurrentScore(_currentScore);
@@ -41,7 +47,8 @@ namespace Score.Controller
             switch (target.Variant)
             {
                 case TargetVariant.ENEMY:
-                    _currentScore--; 
+                    _currentScore--;
+                    _wrongAnswersScore++;
                     break;
                 case TargetVariant.ALLY: //move to config "score per ..."?
                     _currentScore++;
@@ -53,7 +60,7 @@ namespace Score.Controller
             
             if (_currentScore==_targetScore)
             {
-                _signalBus.Fire<LevelCompletedSignal>();
+                _signalBus.Fire(new LevelCompletedSignal(_currentLevelData, _wrongAnswersScore));
                 _targetsController.TargetFinished -= OnTargetFinished;
             }
         }

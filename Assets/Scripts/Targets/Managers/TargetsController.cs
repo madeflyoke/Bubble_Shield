@@ -22,7 +22,7 @@ namespace Targets.Managers
         private void Start()
         {
             _signalBus.Subscribe<LevelStartedSignal>(Initialize);
-            _signalBus.Subscribe<LevelSelectorCallSignal>(ResetController);
+            _signalBus.Subscribe<LevelResetSignal>(ResetController);
         }
 
         private void Initialize(LevelStartedSignal signal)
@@ -60,8 +60,9 @@ namespace Targets.Managers
             }
         }
 
-        private void ResetController(LevelSelectorCallSignal _)
+        private void ResetController()
         {
+            _targetsSpawner.ResetSpawner();
             for (int i = 0, count = _currentTargets.Count; i < count; i++)
             {
                 LeanPool.Despawn(_currentTargets[i]);

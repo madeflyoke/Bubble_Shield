@@ -13,6 +13,8 @@ namespace Installers
             Container.DeclareSignal<LevelSelectorCallSignal>();
             Container.DeclareSignal<LevelStartedSignal>();
             Container.DeclareSignal<LevelCompletedSignal>();
+            Container.DeclareSignal<CallOnRestartLevel>();
+            Container.DeclareSignal<LevelResetSignal>();
         }
     }
 }

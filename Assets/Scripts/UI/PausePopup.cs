@@ -1,6 +1,5 @@
 using Managers;
 using Services;
-using Signals;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -9,17 +8,16 @@ namespace UI
 {
     public class PausePopup : MonoBehaviour
     {
-        [Inject] private SignalBus _signalBus;
         [Inject] private ServicesHolder _servicesHolder;
         
-        [SerializeField] private Button _backToSelectorButton;
         [SerializeField] private Button _closeButton;
+        [SerializeField] private BackToLevelSelectorButton _button;
         
         public void Show()
         {
-            _backToSelectorButton.onClick.AddListener(BackToSelector);
             _closeButton.onClick.AddListener(Hide);
             _servicesHolder.GetService<PauseService>().SetPause(true);
+            _button.Enable(Hide);
             gameObject.SetActive(true);
         }
         
@@ -27,14 +25,8 @@ namespace UI
         {
             gameObject.SetActive(false);
             _servicesHolder.GetService<PauseService>().SetPause(false);
-            _backToSelectorButton.onClick.RemoveListener(BackToSelector);
+            _button.Disable();
             _closeButton.onClick.RemoveListener(Hide);
-        }
-        
-        private void BackToSelector()
-        {
-            _signalBus.Fire<LevelSelectorCallSignal>();
-            Hide();
         }
     }
 }
