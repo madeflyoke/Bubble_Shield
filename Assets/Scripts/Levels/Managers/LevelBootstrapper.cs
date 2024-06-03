@@ -16,7 +16,7 @@ namespace Levels.Managers
         public void Start()
         {
             _signalBus.Subscribe<LevelSelectedSignal>(OnLevelSelected);
-            _signalBus.Subscribe<CallOnRestartLevel>(RestartCurrentLevel);
+            _signalBus.Subscribe<RestartLevelCallSignal>(RestartCurrentLevel);
         }
 
         private void OnLevelSelected(LevelSelectedSignal signal)

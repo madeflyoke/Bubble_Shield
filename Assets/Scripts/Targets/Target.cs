@@ -1,4 +1,5 @@
 using System;
+using Lean.Pool;
 using Targets.Components;
 using Targets.Enums;
 using Targets.Utility;
@@ -33,11 +34,23 @@ namespace Targets
             });
             
             _currentSpeed = targetData.Stats.Speed * Random.Range(0.9f,1.3f); //move out range to config (worth it?)
+            enabled = true;
+
         }
         
         private void FixedUpdate()
         {
             transform.position -= transform.up * Time.fixedDeltaTime * _currentSpeed;
+        }
+
+        public void DespawnAnimated(Action onComplete)
+        {
+            enabled = false;
+            _viewComponent.SetHideAnimation(()=>
+            {
+                LeanPool.Despawn(this);
+                onComplete?.Invoke();
+            });
         }
     }
 }

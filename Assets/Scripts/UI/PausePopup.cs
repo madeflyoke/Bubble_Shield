@@ -1,3 +1,5 @@
+using System;
+using DG.Tweening;
 using Managers;
 using Services;
 using UnityEngine;
@@ -11,22 +13,32 @@ namespace UI
         [Inject] private ServicesHolder _servicesHolder;
         
         [SerializeField] private Button _closeButton;
-        [SerializeField] private BackToLevelSelectorButton _button;
+        [SerializeField] private BackToLevelSelectorButton _backToLevelSelectorButton;
+        [SerializeField] private RestartLevelButton _restartLevelButton;
+        [SerializeField] private PopupAnimator _animator;
         
         public void Show()
         {
             _closeButton.onClick.AddListener(Hide);
             _servicesHolder.GetService<PauseService>().SetPause(true);
-            _button.Enable(Hide);
-            gameObject.SetActive(true);
+            
+            _backToLevelSelectorButton.Enable(Hide);
+            _restartLevelButton.Enable(Hide);
+
+            _animator.PlayShowAnimation();
         }
         
         public void Hide()
         {
-            gameObject.SetActive(false);
-            _servicesHolder.GetService<PauseService>().SetPause(false);
-            _button.Disable();
+            _backToLevelSelectorButton.Disable();
+            _restartLevelButton.Disable();
+            
             _closeButton.onClick.RemoveListener(Hide);
+            
+            _animator.PlayHideAnimation(() =>
+            {
+                _servicesHolder.GetService<PauseService>().SetPause(false);
+            });
         }
     }
 }

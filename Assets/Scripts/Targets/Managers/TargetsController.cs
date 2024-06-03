@@ -46,8 +46,10 @@ namespace Targets.Managers
             if (target!=null)
             {
                 _currentTargets.Remove(target);
-                LeanPool.Despawn(target);
-                TargetFinished?.Invoke(target);
+                target.DespawnAnimated(() =>
+                {
+                    TargetFinished?.Invoke(target);
+                });
             }
         }
 

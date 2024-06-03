@@ -1,5 +1,4 @@
 using Levels;
-using Levels.Managers;
 using Score.View;
 using Signals;
 using Targets;
@@ -25,6 +24,7 @@ namespace Score.Controller
         private void Start()
         {
             _signalBus.Subscribe<LevelStartedSignal>(Initialize);
+            _signalBus.Subscribe<LevelResetSignal>(ResetController);
         }
 
         private void Initialize(LevelStartedSignal signal)
@@ -63,6 +63,11 @@ namespace Score.Controller
                 _signalBus.Fire(new LevelCompletedSignal(_currentLevelData, _wrongAnswersScore));
                 _targetsController.TargetFinished -= OnTargetFinished;
             }
+        }
+
+        private void ResetController()
+        {
+            _targetsController.TargetFinished -= OnTargetFinished;
         }
     }
 }

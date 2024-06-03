@@ -6,7 +6,7 @@ using Zenject;
 
 namespace UI
 {
-    public class BackToLevelSelectorButton : MonoBehaviour
+    public class RestartLevelButton : MonoBehaviour
     {
         [Inject] private SignalBus _signalBus;
         
@@ -18,7 +18,7 @@ namespace UI
             _button.onClick.AddListener(()=>
             {
                 _button.enabled = false;
-                CallOnBackToSelector();
+                CallOnLevelRestart();
                 onClickCallback?.Invoke();
             });
         }
@@ -28,10 +28,10 @@ namespace UI
             _button.onClick.RemoveAllListeners();
         }
         
-        private void CallOnBackToSelector()
+        private void CallOnLevelRestart()
         {
             _signalBus.Fire<LevelResetSignal>();
-            _signalBus.Fire<LevelSelectorCallSignal>();
+            _signalBus.Fire<RestartLevelCallSignal>();
         }
     }
 }

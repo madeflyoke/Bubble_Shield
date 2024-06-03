@@ -22,7 +22,7 @@ namespace Signals
         
     }
 
-    public struct CallOnRestartLevel
+    public struct RestartLevelCallSignal
     {
         
     }
