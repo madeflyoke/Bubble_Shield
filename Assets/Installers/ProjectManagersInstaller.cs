@@ -12,7 +12,7 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.Bind<Bootstrapper>().FromComponentInNewPrefab(_bootstrapper).AsSingle().NonLazy();
-            Container.BindInstance(new ServicesHolder()).AsSingle().NonLazy();
+            Container.BindInstance(new ServicesHolder(Container)).AsSingle().NonLazy();
         }
     }
 }

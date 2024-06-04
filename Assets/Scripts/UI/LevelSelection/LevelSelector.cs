@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Levels.Configs;
+using Services;
 using Signals;
 using UnityEngine;
 using Zenject;
@@ -9,6 +10,7 @@ namespace UI.LevelSelection
     public class LevelSelector : MonoBehaviour
     {
         [Inject] private SignalBus _signalBus;
+        [Inject] private ServicesHolder _servicesHolder;
         
         [SerializeField] private LevelView _levelViewPrefab;
 
@@ -18,26 +20,32 @@ namespace UI.LevelSelection
 
         public void Initialize()
         {
-            SetupLevelViews();
+            InitializeLevelViews();
+            RefreshLevelViews(_servicesHolder.GetService<ProgressService>().LastCompletedLevel);
+            _signalBus.Subscribe<LevelCompletedSignal>(OnLevelCompleted);
+        }
 
-            for (int i = 0, count = _levelsViews.Count; i < count; i++)
-            {
-                int id = i;
-                _levelsViews[i].Initialize(() =>
-                {
-                    _signalBus.Fire(new LevelSelectedSignal(id));
-                });
-            }
+        private void OnLevelCompleted(LevelCompletedSignal signal)
+        {
+            RefreshLevelViews(signal.LevelData.Id);
         }
 
         public void SetActive(bool isActive)
         {
             gameObject.SetActive(isActive);
         }
-        
-        private void SetupLevelViews()
+
+        private void RefreshLevelViews(int levelId)
         {
-            string prefix = "LEVEL_";
+            for (int i = 0, count = _levelsViews.Count; i < count; i++)
+            {
+                _levelsViews[i].SetOpenedView(i <= levelId+1);
+            }
+        }
+        
+        private void InitializeLevelViews()
+        {
+            string prefix = "LEVEL ";
             
             _levelsViews = new List<LevelView>();
             
@@ -45,7 +53,14 @@ namespace UI.LevelSelection
             {
                 var levelView = Instantiate(_levelViewPrefab, _levelsViewParent);
                 _levelsViews.Add(levelView);
-                levelView.SetLevelTitle(prefix + i);
+                
+                int id = i;
+                levelView.SetLevelTitle(prefix + (i+1));
+                
+                _levelsViews[i].Initialize(() =>
+                {
+                    _signalBus.Fire(new LevelSelectedSignal(id));
+                });
             }
         }
     }

@@ -9,12 +9,16 @@ namespace UI.LevelSelection
     {
         [SerializeField] private Button _button;
         [SerializeField] private TMP_Text _levelTitle;
+        [SerializeField] private Image _buttonImage;
+        [SerializeField] private Color _lockedButtonColor;
+        [SerializeField] private Image _lockImage;
+        private Color _defaultButtonColor;
         
         public void Initialize(Action onClick)
         {
+            _defaultButtonColor = _buttonImage.color;
             _button.onClick.AddListener(()=>
             {
-                _button.enabled = false;
                 onClick?.Invoke();
             });
         }
@@ -24,9 +28,12 @@ namespace UI.LevelSelection
             _levelTitle.text = levelTitle;
         }
         
-        private void OnEnable()
+        public void SetOpenedView(bool isOpened)
         {
-            _button.enabled = true;
+            _levelTitle.gameObject.SetActive(isOpened);
+            _lockImage.gameObject.SetActive(!isOpened);
+            _buttonImage.color = isOpened? _defaultButtonColor : _lockedButtonColor;
+            _button.enabled = isOpened;
         }
     }
 }

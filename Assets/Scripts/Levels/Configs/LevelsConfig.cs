@@ -24,6 +24,12 @@ namespace Levels.Configs
             {
                 var levelData = _levels[i];
                 levelData.Id = i;
+                
+                if (levelData.TargetsSpawnData.CollumnsCount < levelData.TargetsSpawnData.TargetsPerSpawn)
+                {
+                    levelData.TargetsSpawnData.CollumnsCount = levelData.TargetsSpawnData.TargetsPerSpawn;
+                }
+                
                 _levels[i] = levelData;
             }
         }

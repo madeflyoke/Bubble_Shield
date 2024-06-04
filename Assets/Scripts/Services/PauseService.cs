@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using Services.Interfaces;
 using UnityEngine;
 
-namespace Managers
+namespace Services
 {
     public class PauseService : IService
     {

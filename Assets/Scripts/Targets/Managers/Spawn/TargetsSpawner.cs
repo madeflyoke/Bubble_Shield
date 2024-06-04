@@ -41,7 +41,7 @@ namespace Targets.Managers.Spawn
         
         private async void StartSpawnCycle(TargetsSpawnData spawnData, float targetScaleHeight)
         {
-            int currentTargetIndex = 0; //prepare local scope variables
+            int currentWaveIndex = 0; //prepare local scope variables
             int allyNextSpawnIndex = 0;
             Target currentHighestTarget =null;
             Vector3 lastSpawnPoint = _currentSpawnPoints[^1]; 
@@ -64,10 +64,10 @@ namespace Targets.Managers.Spawn
                     spawnPoint.y = GetCorrectedYPos(currentHighestTarget, spawnPoint.y, targetScaleHeight); //spawn guarantee upper than highest target
                     
                     TargetVariant variant;
-                    if (currentTargetIndex == allyNextSpawnIndex)
+                    if (currentWaveIndex == allyNextSpawnIndex)
                     {
                         variant = TargetVariant.ALLY;
-                        allyNextSpawnIndex += spawnData.AvarageAllySpawnRatio + Random.Range(-1, 1);
+                        allyNextSpawnIndex += spawnData.AvarageAllyPerWaveSpawnRatio + Random.Range(-1, 1);
                     }
                     else
                     {
@@ -75,7 +75,6 @@ namespace Targets.Managers.Spawn
                     }
 
                     var target = SpawnTarget(spawnPoint, variant);
-                    currentTargetIndex++;
                     
                     if (i==0)
                     {
@@ -89,7 +88,8 @@ namespace Targets.Managers.Spawn
                         }
                     }
                 }
-
+                
+                currentWaveIndex++;
                 lastSpawnPoint = spawnPoint;
                 currentHighestTarget = iterationHighestElement;
             }

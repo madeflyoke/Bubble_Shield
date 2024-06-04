@@ -9,7 +9,6 @@ namespace Targets.Managers.Spawn
         public int CollumnsCount;
         public float TargetSpawnDelay;
         public int TargetsPerSpawn;
-        [Tooltip("Ally per THIS enemies")]
-        [SerializeField] public int AvarageAllySpawnRatio;
+        [SerializeField] public int AvarageAllyPerWaveSpawnRatio;
     }
 }

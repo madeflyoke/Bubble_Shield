@@ -12,7 +12,6 @@ namespace UI
 
         private void Awake()
         {
-            Debug.LogWarning("START HELLO????");
             _defaultOnImageScale = _onImage.transform.localScale;
         }
 
