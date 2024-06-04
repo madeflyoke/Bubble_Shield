@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,8 +10,9 @@ namespace UI
         private Tween _tween;
         private Vector3 _defaultOnImageScale;
 
-        private void Start()
+        private void Awake()
         {
+            Debug.LogWarning("START HELLO????");
             _defaultOnImageScale = _onImage.transform.localScale;
         }
 

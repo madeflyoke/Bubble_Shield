@@ -1,27 +1,19 @@
+#if UNITY_EDITOR
 using UnityEditor;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEditor.SceneManagement;
 
 namespace Editor
 {
-    public static class AutoPlayModeScene
+    [InitializeOnLoad]
+    public class AutoPlayModeScene
     {
-#if UNITY_EDITOR
-        
-        private const string SceneAssetPath = "Assets/Scenes/Bootstrapper.unity";
-        
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void SetFirstSceneAsActive()
+        static AutoPlayModeScene()
         {
-            Debug.LogWarning("Set initial scene...");
-            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(SceneAssetPath);
-            if (sceneAsset != null)
-            {
-                var scenePath = AssetDatabase.GetAssetPath(sceneAsset);
-                SceneManager.LoadScene(scenePath);
-            }
+            var pathOfFirstScene = EditorBuildSettings.scenes[0].path;
+            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(pathOfFirstScene);
+            EditorSceneManager.playModeStartScene = sceneAsset;
         }
-        
-#endif
     }
 }
+
+#endif

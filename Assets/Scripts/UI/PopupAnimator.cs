@@ -7,15 +7,14 @@ namespace UI
     public class PopupAnimator : MonoBehaviour
     {
         [SerializeField] private float _scaleMultiplier = 1.2f;
-        
         private Vector3 _defaultScale;
         private Tween _tween;
-        
-        private void Start()
+
+        private void Awake()
         {
             _defaultScale = transform.localScale;
         }
-        
+
         public void PlayShowAnimation(Action onComplete=null, bool instant=false)
         {
             _tween?.Kill();
