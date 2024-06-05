@@ -9,11 +9,10 @@ namespace Services
 {
     public class ServicesHolder : IDisposable
     {
-        
         private Dictionary<Type,IService> _services;
         private CancellationTokenSource _cts;
         private bool _isInitialized;
-        private DiContainer _container;
+        private readonly DiContainer _container;
 
         public ServicesHolder(DiContainer container)
         {
@@ -36,7 +35,7 @@ namespace Services
             
             _services = new Dictionary<Type, IService>();
             //add all services below
-            AddService<YandexService>();
+          //  AddService<YandexService>();
             AddService<ProgressService>();
             AddService<PauseService>();
 

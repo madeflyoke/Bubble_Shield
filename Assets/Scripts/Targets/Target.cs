@@ -10,8 +10,6 @@ namespace Targets
 {
     public class Target : MonoBehaviour
     {
-        public static event Action<Target> TargetClicked;
-
         public TargetVariant Variant => _targetData.Variant;
         
         [field: SerializeField] public Collider2D Collider { get; private set; }
@@ -27,23 +25,25 @@ namespace Targets
             _targetData = targetData;
             
             _effectComponent.Initialize(targetData.RelatedColor);
-            _viewComponent.Initialize(_targetData.Sprite, ()=>
-            {
-                _effectComponent.PlayOnDeathParticle();
-                TargetClicked?.Invoke(this);
-            });
+            _viewComponent.Initialize(_targetData.Sprite);
             
             _currentSpeed = targetData.Stats.Speed * Random.Range(0.9f,1.3f); //move out range to config (worth it?)
             enabled = true;
-
         }
-        
+
         private void FixedUpdate()
         {
             transform.position -= transform.up * Time.fixedDeltaTime * _currentSpeed;
         }
 
-        public void DespawnAnimated(Action onComplete)
+        public void OnTouchedHide(Action onComplete)
+        {
+            enabled = false;
+            _effectComponent.PlayOnDeathParticle();
+            onComplete?.Invoke();
+        }
+        
+        public void OnFinishHide(Action onComplete)
         {
             enabled = false;
             _viewComponent.SetHideAnimation(()=>

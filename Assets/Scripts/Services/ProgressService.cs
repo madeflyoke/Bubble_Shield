@@ -26,7 +26,7 @@ namespace Services
             PlayerPrefs.SetString(PlayerPrefsSaveKeys.LEVEL_COMPLETED_KEY, signal.LevelData.Id.ToString());
         }
 
-        private void ExtractData()
+        private void ExtractData() //TODO Change to yandex prefs
         {
             if (PlayerPrefs.HasKey(PlayerPrefsSaveKeys.LEVEL_COMPLETED_KEY)==false)
             {

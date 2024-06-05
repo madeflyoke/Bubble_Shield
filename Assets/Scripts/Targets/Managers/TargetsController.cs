@@ -17,7 +17,7 @@ namespace Targets.Managers
         
         [SerializeField] private TargetsSpawner _targetsSpawner;
         [SerializeField] private FinishZone _finishZone;
-        private List<Target> _currentTargets;
+        private Dictionary<Collider2D, Target> _currentTargetsMap;
 
         private void Start()
         {
@@ -27,8 +27,8 @@ namespace Targets.Managers
 
         private void Initialize(LevelStartedSignal signal)
         {
-            _currentTargets = new List<Target>();
-            Target.TargetClicked += OnTargetClicked;
+            _currentTargetsMap = new Dictionary<Collider2D, Target>();
+            TargetsBlade.TargetTouched += OnTargetTouched;
             _targetsSpawner.Initialize(signal.LevelData.TargetsSpawnData, signal.LevelData.LevelTargetsStats);
             
             _targetsSpawner.TargetSpawned += OnTargetSpawned;
@@ -37,41 +37,46 @@ namespace Targets.Managers
         
         private void OnTargetSpawned(Target target)
         {
-            _currentTargets.Add(target);
+            _currentTargetsMap.Add(target.Collider, target);
         }
         
         private void OnTargetTriggeredFinish(Collider2D targetCol)
         {
-            var target = _currentTargets.FirstOrDefault(x => x.Collider == targetCol);
+            var target = _currentTargetsMap[targetCol];
             if (target!=null)
             {
-                _currentTargets.Remove(target);
-                target.DespawnAnimated(() =>
+                _currentTargetsMap.Remove(targetCol);
+                target.OnFinishHide(() =>
                 {
                     TargetFinished?.Invoke(target);
                 });
             }
         }
 
-        private void OnTargetClicked(Target target)
+        private void OnTargetTouched(Collider2D targetCol)
         {
-            if (_currentTargets.Contains(target))
+            if (_currentTargetsMap.ContainsKey(targetCol))
             {
-                _currentTargets.Remove(target);
-                LeanPool.Despawn(target);
+                var target = _currentTargetsMap[targetCol];
+                _currentTargetsMap.Remove(targetCol);
+                target.OnTouchedHide(() =>
+                {
+                    LeanPool.Despawn(targetCol.gameObject);
+                });
             }
         }
-
+        
         private void ResetController()
         {
             _targetsSpawner.ResetSpawner();
-            for (int i = 0, count = _currentTargets.Count; i < count; i++)
+            var targetsList = _currentTargetsMap.Values.ToList();
+            for (int i = 0, count = targetsList.Count; i < count; i++)
             {
-                LeanPool.Despawn(_currentTargets[i]);
+                LeanPool.Despawn(targetsList[i]);
             }
             
-            _currentTargets = null;
-            Target.TargetClicked -= OnTargetClicked;
+            _currentTargetsMap = null;
+            TargetsBlade.TargetTouched -= OnTargetTouched;
             _targetsSpawner.TargetSpawned -= OnTargetSpawned;
             _finishZone.TargetTriggeredFinish -= OnTargetTriggeredFinish;
         }

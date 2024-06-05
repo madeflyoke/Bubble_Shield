@@ -37,10 +37,16 @@ namespace UI.LevelSelection
 
         private void RefreshLevelViews(int levelId)
         {
+            
             for (int i = 0, count = _levelsViews.Count; i < count; i++)
             {
-                _levelsViews[i].SetOpenedView(i <= levelId+1);
+                _levelsViews[i].SetOpenedView(true);
             }
+            
+            // for (int i = 0, count = _levelsViews.Count; i < count; i++)
+            // {
+            //     _levelsViews[i].SetOpenedView(i <= levelId+1);
+            // }
         }
         
         private void InitializeLevelViews()

@@ -16,8 +16,6 @@ namespace Levels.Configs
             return _levels.FirstOrDefault(x => x.Id == levelId);
         }
         
-#if UNITY_EDITOR
-
         public void OnBeforeSerialize()
         {
             for (int i = 0; i < _levels.Count; i++)
@@ -38,9 +36,5 @@ namespace Levels.Configs
         {
            
         }
-        
-#endif
-        
-     
     }
 }
