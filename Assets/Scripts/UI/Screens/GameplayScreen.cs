@@ -11,6 +11,8 @@ namespace UI.Screens
     {
         [Inject] private SignalBus _signalBus;
         
+        public bool IsFocused => !_pausePopup.IsShowed && !_levelCompletePopup.IsShowed && gameObject.activeSelf;
+        
         [SerializeField] private Button _pauseButton;
         [SerializeField] private PausePopup _pausePopup;
         [SerializeField] private LevelCompletePopup _levelCompletePopup;
@@ -46,6 +48,6 @@ namespace UI.Screens
         private void ShowLevelCompletePopup(LevelCompletedSignal signal)
         {
             _levelCompletePopup.Show(signal);
-        } 
+        }
     }
 }

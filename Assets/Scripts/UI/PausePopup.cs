@@ -1,6 +1,3 @@
-using System;
-using DG.Tweening;
-using Managers;
 using Services;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +9,8 @@ namespace UI
     {
         [Inject] private ServicesHolder _servicesHolder;
         
+        public bool IsShowed { get; private set; }
+        
         [SerializeField] private Button _closeButton;
         [SerializeField] private BackToLevelSelectorButton _backToLevelSelectorButton;
         [SerializeField] private RestartLevelButton _restartLevelButton;
@@ -19,6 +18,8 @@ namespace UI
         
         public void Show()
         {
+            IsShowed = true;
+
             _closeButton.onClick.AddListener(Hide);
             _servicesHolder.GetService<PauseService>().SetPause(true);
             
@@ -39,6 +40,7 @@ namespace UI
             {
                 _servicesHolder.GetService<PauseService>().SetPause(false);
             });
+            IsShowed = false;
         }
     }
 }

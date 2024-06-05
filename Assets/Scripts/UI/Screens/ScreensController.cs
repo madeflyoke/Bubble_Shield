@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Levels.Managers;
 using Signals;
 using UI.Screens.Interfaces;
 using UnityEngine;
@@ -11,6 +9,8 @@ namespace UI.Screens
     public class ScreensController : MonoBehaviour
     {
         [Inject] private SignalBus _signalBus;
+
+        public GameplayScreen GameplayScreen => _gameplayScreen;
         
         [SerializeField] private MainMenuScreen _mainMenuScreen;
         [SerializeField] private GameplayScreen _gameplayScreen;

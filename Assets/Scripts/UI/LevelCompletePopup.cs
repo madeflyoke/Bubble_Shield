@@ -12,6 +12,8 @@ namespace UI
     {
         [Inject] private ServicesHolder _servicesHolder;
 
+        public bool IsShowed { get; private set; }
+
         [SerializeField] private List<LevelStar> _levelStars;
         [SerializeField] private BackToLevelSelectorButton _backToSelectorButton;
         [SerializeField] private RestartLevelButton _restartLevelButton;
@@ -19,6 +21,8 @@ namespace UI
 
         public void Show(LevelCompletedSignal signal)
         {
+            IsShowed = true;
+            
             _levelStars.ForEach(x=>x.Hide());
             var starsCount = ScoreUtilities.GetStarsCountByScore(signal.LevelData.TargetScore, signal.WrongScoreAnswers,
                 _levelStars.Count);
@@ -44,6 +48,8 @@ namespace UI
             {
                 _servicesHolder.GetService<PauseService>().SetPause(false);
             });
+            
+            IsShowed = false;
         }
     }
 }

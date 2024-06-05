@@ -1,20 +1,52 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using UI.Screens;
+using UniRx;
 using UnityEngine;
+using Zenject;
 
 public class TargetsBlade : MonoBehaviour
 {
+    [Inject] private ScreensController _screensController;
+    
     public static event Action<Collider2D> TargetTouched;
     
     [SerializeField] private Collider2D _triggerCollider;
     [SerializeField] private TrailRenderer _trail;
     private Camera _cam;
     private Vector2 _previousPos;
+    private IDisposable _enableChecker;
 
     private void Awake()
     {
         _cam = Camera.main;
+        Disable();
+        
+        _enableChecker = _screensController.GameplayScreen.ObserveEveryValueChanged(x=>x.IsFocused)
+            .Subscribe(OnGameplayScreenFocusChanged).AddTo(this);
+    }
+
+    private void OnGameplayScreenFocusChanged(bool isFocused)
+    {
+        if (isFocused)
+        {
+            Enable();
+        }
+        else
+        {
+            Disable();
+        }
+    }
+    
+    private void Enable()
+    {
+        gameObject.SetActive(true);
+    }
+
+    private void Disable()
+    {
+        gameObject.SetActive(false);
+        _trail.Clear();
+        _triggerCollider.enabled = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
