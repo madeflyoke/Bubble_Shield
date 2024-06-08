@@ -47,7 +47,7 @@ namespace Targets.Managers.Spawn
             _targetCalculatedHeight = targetCalculatedScale.y;
             _targetsFactory.SetCommonSpecifications(targetCalculatedScale);
 
-            _difficultyDatas = difficultiesData; //TODO HERE
+            _difficultyDatas = difficultiesData;
             SetCurrentDifficultyData(0);
         }
 
