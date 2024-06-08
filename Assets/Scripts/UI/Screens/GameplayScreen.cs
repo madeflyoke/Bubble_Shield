@@ -11,20 +11,24 @@ namespace UI.Screens
     {
         [Inject] private SignalBus _signalBus;
         
-        public bool IsFocused => !_pausePopup.IsShowed && !_levelCompletePopup.IsShowed && gameObject.activeSelf;
+        public bool IsFocused => !_pausePopup.IsShowed && !matchCompletePopup.IsShowed && gameObject.activeSelf;
         
         [SerializeField] private Button _pauseButton;
         [SerializeField] private PausePopup _pausePopup;
-        [SerializeField] private LevelCompletePopup _levelCompletePopup;
+        [SerializeField] private MatchCompletePopup matchCompletePopup;
+
+        private void Awake()
+        {
+            _signalBus.Subscribe<MatchCompletedSignal>(OnLevelCompleted);
+        }
 
         private void Start()
         {
             _pausePopup.Hide();
-            _levelCompletePopup.Hide();
-            _signalBus.Subscribe<LevelCompletedSignal>(OnLevelCompleted);
+            matchCompletePopup.Hide();
         }
 
-        private void OnLevelCompleted(LevelCompletedSignal signal)
+        private void OnLevelCompleted(MatchCompletedSignal signal)
         {
             ShowLevelCompletePopup(signal);
         }
@@ -45,9 +49,9 @@ namespace UI.Screens
             _pausePopup.Show();
         }
 
-        private void ShowLevelCompletePopup(LevelCompletedSignal signal)
+        private void ShowLevelCompletePopup(MatchCompletedSignal signal)
         {
-            _levelCompletePopup.Show(signal);
+            matchCompletePopup.Show(signal);
         }
     }
 }

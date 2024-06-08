@@ -12,31 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bdd9f7ef77a9224b9902fa031798ba2, type: 3}
   m_Name: LevelConfig
   m_EditorClassIdentifier: 
-  _levels:
-  - Id: 0
-    TargetScore: 20
-    TargetsSpawnData:
-      CollumnsCount: 5
-      TargetSpawnDelay: 1
-      TargetsPerSpawn: 2
-      AvarageAllyPerWaveSpawnRatio: 3
-    LevelTargetsStats:
-      Speed: 2
-  - Id: 1
-    TargetScore: 40
-    TargetsSpawnData:
-      CollumnsCount: 5
-      TargetSpawnDelay: 1
-      TargetsPerSpawn: 4
-      AvarageAllyPerWaveSpawnRatio: 3
-    LevelTargetsStats:
-      Speed: 2.8
-  - Id: 2
-    TargetScore: 50
-    TargetsSpawnData:
-      CollumnsCount: 5
-      TargetSpawnDelay: 0.5
-      TargetsPerSpawn: 2
-      AvarageAllyPerWaveSpawnRatio: 3
-    LevelTargetsStats:
-      Speed: 3.5
+  <MatchData>k__BackingField:
+    MaxHealth: 1000
+    SpawnPointsCount: 5
+    DifficultiesData:
+    - Index: 0
+      ScoreToNextDifficulty: 1000
+      TargetsSpawnData:
+        TargetSpawnDelay: 0.3
+        TargetsPerSpawn: 5
+        AvarageAllyPerWaveSpawnRatio: 4
+      TargetsStats:
+        Speed: 2
+    - Index: 1
+      ScoreToNextDifficulty: 30
+      TargetsSpawnData:
+        TargetSpawnDelay: 1
+        TargetsPerSpawn: 4
+        AvarageAllyPerWaveSpawnRatio: 4
+      TargetsStats:
+        Speed: 2
+    - Index: 2
+      ScoreToNextDifficulty: 2147483647
+      TargetsSpawnData:
+        TargetSpawnDelay: 2
+        TargetsPerSpawn: 5
+        AvarageAllyPerWaveSpawnRatio: 4
+      TargetsStats:
+        Speed: 2

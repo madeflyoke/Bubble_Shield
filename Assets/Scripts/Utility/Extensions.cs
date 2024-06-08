@@ -15,7 +15,11 @@ namespace Utility
         }
         
         public static void ShuffleWithoutLastRepeat<T>(this List<T> items, T previousLast)
-        {      
+        {
+            if (items.Count<=1)
+            {
+                return;
+            }
             items.Shuffle();
             
             if (EqualityComparer<T>.Default.Equals(items[0], previousLast))

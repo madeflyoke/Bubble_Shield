@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Signals;
 using UI.Screens.Interfaces;
 using UnityEngine;
@@ -9,36 +11,36 @@ namespace UI.Screens
     public class ScreensController : MonoBehaviour
     {
         [Inject] private SignalBus _signalBus;
-
-        public GameplayScreen GameplayScreen => _gameplayScreen;
         
         [SerializeField] private MainMenuScreen _mainMenuScreen;
         [SerializeField] private GameplayScreen _gameplayScreen;
         private List<IScreen> _screens;
-        
-        private void Start()
+
+        private void Awake()
         {
             _screens = new List<IScreen>
             {
                 _mainMenuScreen,
                 _gameplayScreen
             };
+            _signalBus.Subscribe<MatchStartedSignal>(OnMatchStarted);
+        }
 
-            _signalBus.Subscribe<LevelSelectedSignal>(OnLevelStarted);
-            _signalBus.Subscribe<LevelSelectorCallSignal>(OnLevelSelectorCall);
+        private void Start()
+        {
             ShowSingleScreen<MainMenuScreen>();
         }
+
+        public T GetScreen<T>() where T : IScreen
+        {
+            return (T)_screens.FirstOrDefault(x => x.GetType() == typeof(T));
+        }
         
-        private void OnLevelStarted(LevelSelectedSignal _)
+        private void OnMatchStarted(MatchStartedSignal _)
         {
             ShowSingleScreen<GameplayScreen>();
         }
-
-        private void OnLevelSelectorCall(LevelSelectorCallSignal _)
-        {
-            ShowSingleScreen<MainMenuScreen>();
-        }
-
+        
         private void ShowSingleScreen<T>() where T: IScreen
         {
             foreach (var screen in _screens)

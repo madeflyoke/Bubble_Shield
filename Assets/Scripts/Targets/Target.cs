@@ -1,9 +1,11 @@
 using System;
 using Lean.Pool;
+using Slicing;
 using Targets.Components;
 using Targets.Enums;
 using Targets.Utility;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
 namespace Targets
@@ -11,8 +13,6 @@ namespace Targets
     public class Target : MonoBehaviour
     {
         public TargetVariant Variant => _targetData.Variant;
-        
-        [field: SerializeField] public Collider2D Collider { get; private set; }
         
         [SerializeField] private TargetViewComponent _viewComponent;
         [SerializeField] private TargetEffectsComponent _effectComponent;
@@ -37,9 +37,10 @@ namespace Targets
         }
 
         public void OnTouchedHide(Action onComplete)
-        {
+        { 
             enabled = false;
-            _effectComponent.PlayOnDeathParticle();
+           _effectComponent.PlayOnDeathParticle();
+            LeanPool.Despawn(this);
             onComplete?.Invoke();
         }
         

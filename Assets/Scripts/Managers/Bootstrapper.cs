@@ -14,7 +14,7 @@ namespace Managers
 
         private void Awake()
         {
-            Application.targetFrameRate = 60;
+            Application.targetFrameRate = 40;
             Input.multiTouchEnabled = false;
             _servicesHolder.InitializeServices(LoadMainScene);
         }

@@ -9,12 +9,10 @@ namespace Installers
         {
             SignalBusInstaller.Install(Container);
 
-            Container.DeclareSignal<LevelSelectedSignal>();
-            Container.DeclareSignal<LevelSelectorCallSignal>();
-            Container.DeclareSignal<LevelStartedSignal>();
-            Container.DeclareSignal<LevelCompletedSignal>();
-            Container.DeclareSignal<RestartLevelCallSignal>();
-            Container.DeclareSignal<LevelResetSignal>();
+            Container.DeclareSignal<MatchStartedSignal>();
+            Container.DeclareSignal<MatchCompletedSignal>();
+            Container.DeclareSignal<StartMatchCallSignal>();
+            Container.DeclareSignal<ResetMatchSignal>();
         }
     }
 }

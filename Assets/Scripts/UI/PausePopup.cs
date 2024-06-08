@@ -12,8 +12,7 @@ namespace UI
         public bool IsShowed { get; private set; }
         
         [SerializeField] private Button _closeButton;
-        [SerializeField] private BackToLevelSelectorButton _backToLevelSelectorButton;
-        [SerializeField] private RestartLevelButton _restartLevelButton;
+        [SerializeField] private RestartMatchButton _restartMatchButton;
         [SerializeField] private PopupAnimator _animator;
         
         public void Show()
@@ -23,16 +22,14 @@ namespace UI
             _closeButton.onClick.AddListener(Hide);
             _servicesHolder.GetService<PauseService>().SetPause(true);
             
-            _backToLevelSelectorButton.Enable(Hide);
-            _restartLevelButton.Enable(Hide);
+            _restartMatchButton.Enable(Hide);
 
             _animator.PlayShowAnimation();
         }
         
         public void Hide()
         {
-            _backToLevelSelectorButton.Disable();
-            _restartLevelButton.Disable();
+            _restartMatchButton.Disable();
             
             _closeButton.onClick.RemoveListener(Hide);
             

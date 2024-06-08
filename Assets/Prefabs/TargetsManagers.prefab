@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3105454062405294901}
   - component: {fileID: 945727551892847519}
   - component: {fileID: 5619029341628942419}
-  - component: {fileID: 933890302977956453}
+  - component: {fileID: 8972725046423399041}
   m_Layer: 0
   m_Name: TargetsManagers
   m_TagString: Untagged
@@ -47,8 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ac1810862f6ec4a9b630264daee9da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spawnHeight: 6
+  _sidesSpawnPadding: 0.75
   _targetsFactory: {fileID: 945727551892847519}
-  _spawnPointsCreator: {fileID: 933890302977956453}
+  _targetsHolder: {fileID: 0}
+  _scoreController: {fileID: 0}
 --- !u!114 &945727551892847519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetPrefab: {fileID: 9168553859601371465, guid: 815b882f230aec349982f1f3cf7399d7, type: 3}
-  _targetsConfig: {fileID: 11400000, guid: 637a6c2891dc12048be0861661c2a42c, type: 2}
+  _targetsConfigHolder: {fileID: 8972725046423399041}
 --- !u!114 &5619029341628942419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,7 +80,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _targetsSpawner: {fileID: 3105454062405294901}
   _finishZone: {fileID: 0}
---- !u!114 &933890302977956453
+--- !u!114 &8972725046423399041
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,9 +89,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5876318554803752700}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 449b294f36c30ca45a05933d884bc5f7, type: 3}
+  m_Script: {fileID: 11500000, guid: 90d56dfa35f54b84e85dafa49700e87b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnHeight: 6
-  _sidesSpawnPadding: 0.75
-  _spawnPointsHolder: {fileID: 0}
+  _targetsConfig: {fileID: 11400000, guid: 637a6c2891dc12048be0861661c2a42c, type: 2}

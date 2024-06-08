@@ -3,44 +3,84 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Signals;
+using Match;
+using Score.Controller;
 using Targets.Enums;
-using Targets.Utility;
 using UnityEngine;
 using Utility;
-using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Targets.Managers.Spawn
 {
     public class TargetsSpawner : MonoBehaviour
     {
-        [Inject] private SignalBus _signalBus;
-        
         public event Action<Target> TargetSpawned;
         
+        [SerializeField] private float _spawnHeight =6f;
+        [SerializeField] private float _sidesSpawnPadding=0.75f;
+        
         [SerializeField] private TargetsFactory _targetsFactory;
-        [SerializeField] private SpawnPointsCreator _spawnPointsCreator;
         [SerializeField] private RectTransform _targetsHolder;
+        [SerializeField] private ScoreController _scoreController;
+
+        private List<DifficultyData> _difficultyDatas;
+        private DifficultyData _currentDifficultyData;
 
         private List<Vector3> _currentSpawnPoints;
-        private RectTransform _parent;
 
-        private CancellationTokenSource _cts;
+        private bool _nextDifficultyCalled;
         
-        public void Initialize(TargetsSpawnData spawnData, LevelTargetStats levelTargetStats)
+        private CancellationTokenSource _cts;
+        private UniTask _spawnTask;
+        
+        private float _targetCalculatedHeight;
+
+        public void Initialize(List<DifficultyData> difficultiesData, int spawnPointsCount)
         {
             _cts = new CancellationTokenSource();
+            _scoreController.CurrentScoreChanged += OnCurrentScoreChanged;
             
-            var spawnPoints = _spawnPointsCreator.CreateSpawnPoints(spawnData.CollumnsCount, _targetsHolder, out Vector3 targetCalculatedScale);
+            var spawnPoints = new SpawnPointsCreator(_spawnHeight,  _sidesSpawnPadding, spawnPointsCount, _targetsHolder)
+                .CreateSpawnPoints(out Vector3 targetCalculatedScale);
             _currentSpawnPoints = spawnPoints.ToList(); //copy
             
-            _targetsFactory.SetCurrentSpecifications(levelTargetStats, targetCalculatedScale);
-            StartSpawnCycle(spawnData, targetCalculatedScale.y);
+            _targetCalculatedHeight = targetCalculatedScale.y;
+            _targetsFactory.SetCommonSpecifications(targetCalculatedScale);
+
+            _difficultyDatas = difficultiesData; //TODO HERE
+            SetCurrentDifficultyData(0);
+        }
+
+        private void SetCurrentDifficultyData(int index)
+        {
+            _currentDifficultyData = _difficultyDatas[index];
+            
+            _targetsFactory.SetCurrentSpecifications(_currentDifficultyData.TargetsStats);
+            _spawnTask = StartSpawnCycle();
         }
         
-        private async void StartSpawnCycle(TargetsSpawnData spawnData, float targetScaleHeight)
+        private async void OnCurrentScoreChanged(int score)
         {
+            if (_currentDifficultyData.ScoreToNextDifficulty <= score)
+            {
+                _scoreController.CurrentScoreChanged -= OnCurrentScoreChanged;
+                _nextDifficultyCalled = true;
+                var nextIndex = Mathf.Clamp(_difficultyDatas.IndexOf(_currentDifficultyData)+1, 0, _difficultyDatas.Count-1);
+
+                await _spawnTask;
+                
+                _cts = new CancellationTokenSource();
+                _scoreController.CurrentScoreChanged += OnCurrentScoreChanged;
+                _nextDifficultyCalled = false;
+                SetCurrentDifficultyData(nextIndex);
+            }
+        }
+
+        private async UniTask StartSpawnCycle()
+        {
+            Debug.LogWarning("Start new cycle");
+            var spawnData = _currentDifficultyData.TargetsSpawnData;
+            
             int currentWaveIndex = 0; //prepare local scope variables
             int allyNextSpawnIndex = 0;
             Target currentHighestTarget =null;
@@ -60,8 +100,7 @@ namespace Targets.Managers.Spawn
                 for (int i = 0; i < spawnData.TargetsPerSpawn; i++)
                 {
                     spawnPoint = _currentSpawnPoints[i];
-                    
-                    spawnPoint.y = GetCorrectedYPos(currentHighestTarget, spawnPoint.y, targetScaleHeight); //spawn guarantee upper than highest target
+                    spawnPoint.y = GetCorrectedYPos(currentHighestTarget, spawnPoint.y); //spawn guarantee upper than highest target
                     
                     TargetVariant variant;
                     if (currentWaveIndex == allyNextSpawnIndex)
@@ -92,16 +131,21 @@ namespace Targets.Managers.Spawn
                 currentWaveIndex++;
                 lastSpawnPoint = spawnPoint;
                 currentHighestTarget = iterationHighestElement;
+
+                if (_nextDifficultyCalled)
+                {
+                    return;
+                }
             }
         }
 
-        private float GetCorrectedYPos(Target highestTarget, float targetYPos, float targetScaleHeight)
+        private float GetCorrectedYPos(Target highestTarget, float targetYPos)
         {
             var newPosY = targetYPos + Random.Range(-1f, 1f);
                     
             if (highestTarget != null)
             {
-                var limitedY = highestTarget.transform.position.y + targetScaleHeight;
+                var limitedY = highestTarget.transform.position.y + _targetCalculatedHeight;
                 newPosY = Mathf.Clamp(newPosY, limitedY, newPosY);
             }
 
@@ -124,6 +168,7 @@ namespace Targets.Managers.Spawn
         public void ResetSpawner()
         {
             _cts?.Cancel();
+            _scoreController.CurrentScoreChanged -= OnCurrentScoreChanged;
         }
         
         private void OnDisable()

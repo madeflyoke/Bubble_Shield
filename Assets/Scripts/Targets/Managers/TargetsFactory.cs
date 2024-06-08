@@ -1,4 +1,3 @@
-using System;
 using Lean.Pool;
 using Targets.Configs;
 using Targets.Enums;
@@ -9,32 +8,40 @@ namespace Targets.Managers
 {
     public class TargetsFactory : MonoBehaviour
     {
-        public Vector3 TargetScale { get; private set; }
-        
         [SerializeField] private Target _targetPrefab;
-        [SerializeField] private TargetsConfig _targetsConfig;
+        [SerializeField] private TargetsConfigHolder _targetsConfigHolder;
         
-        private LevelTargetStats _currentLevelTargetsStats;
-        
-        public void SetCurrentSpecifications(LevelTargetStats levelTargetStats, Vector3 targetScale = default)
+        private TargetStats _currentTargetsStats;
+        private Vector3 _targetScale;
+
+        private void Awake()
         {
-            _currentLevelTargetsStats = levelTargetStats;
-            TargetScale = targetScale;
+            _targetsConfigHolder.Initialize();
+        }
+
+        public void SetCurrentSpecifications(TargetStats targetStats)
+        {
+            _currentTargetsStats = targetStats;
+        }
+        
+        public void SetCommonSpecifications(Vector3 targetScale = default)
+        {
+            _targetScale = targetScale;
         }
         
         public Target CreateTarget(TargetSpawnData spawnData)
         {
             var target = LeanPool.Spawn(_targetPrefab, spawnData.Position, Quaternion.identity, spawnData.Parent);
-            target.transform.localScale = TargetScale;
-            var sprite = _targetsConfig.GetRandomSprite(spawnData.Variant);
-            var relatedColor = _targetsConfig.GetRelatedTargetColor(sprite);
+            target.transform.localScale = _targetScale;
+            var sprite = _targetsConfigHolder.GetRandomSprite(spawnData.Variant);
+            var relatedColor = _targetsConfigHolder.GetRelatedTargetColor(sprite);
             
             target.Initialize(new TargetData()
             {
                 Variant = spawnData.Variant,
                 Sprite = sprite,
                 RelatedColor =  relatedColor,
-                Stats = _currentLevelTargetsStats
+                Stats = _currentTargetsStats
             });
             return target;
         }

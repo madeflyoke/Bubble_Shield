@@ -1,51 +1,28 @@
-using Levels;
+using Match;
 
 namespace Signals
 {
-    public struct LevelSelectedSignal
-    {
-        public readonly int LevelId;
-
-        public LevelSelectedSignal(int levelId)
-        {
-            LevelId = levelId;
-        }
-    }
-
-    public struct LevelResetSignal
+    public struct ResetMatchSignal
     {
         
     }
     
-    public struct LevelSelectorCallSignal
+    public struct StartMatchCallSignal
     {
         
     }
 
-    public struct RestartLevelCallSignal
+    public struct MatchStartedSignal
     {
-        
-    }
+        public readonly MatchData MatchData;
 
-    public struct LevelStartedSignal
-    {
-        public readonly LevelData LevelData;
-
-        public LevelStartedSignal(LevelData levelData)
+        public MatchStartedSignal(MatchData matchData)
         {
-            LevelData = levelData;
+            MatchData =  matchData;
         }
     }
 
-    public struct LevelCompletedSignal
+    public struct MatchCompletedSignal
     {
-        public readonly LevelData LevelData;
-        public readonly int WrongScoreAnswers;
-
-        public LevelCompletedSignal(LevelData levelData, int wrongScoreAnswers)
-        {
-            LevelData = levelData;
-            WrongScoreAnswers = wrongScoreAnswers;
-        }
     }
 }

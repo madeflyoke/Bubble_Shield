@@ -8,6 +8,6 @@ namespace Targets.Utility
         public TargetVariant Variant;
         public Sprite Sprite;
         public Color RelatedColor;
-        public LevelTargetStats Stats;
+        public TargetStats Stats;
     }
 }

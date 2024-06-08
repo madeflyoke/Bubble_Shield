@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Finish;
 using Lean.Pool;
 using Signals;
+using Slicing;
 using Targets.Managers.Spawn;
 using UnityEngine;
 using Zenject;
@@ -14,38 +16,41 @@ namespace Targets.Managers
         [Inject] private SignalBus _signalBus;
         
         public event Action<Target> TargetFinished;
-        
+        public event Action<Target> TargetKilled;
+
         [SerializeField] private TargetsSpawner _targetsSpawner;
         [SerializeField] private FinishZone _finishZone;
-        private Dictionary<Collider2D, Target> _currentTargetsMap;
+        private Dictionary<GameObject, Target> _currentTargetsMap;
 
-        private void Start()
+        private void Awake()
         {
-            _signalBus.Subscribe<LevelStartedSignal>(Initialize);
-            _signalBus.Subscribe<LevelResetSignal>(ResetController);
+            _signalBus.Subscribe<MatchStartedSignal>(Initialize);
+            _signalBus.Subscribe<ResetMatchSignal>(ResetController);
         }
 
-        private void Initialize(LevelStartedSignal signal)
+        private void Initialize(MatchStartedSignal signal)
         {
-            _currentTargetsMap = new Dictionary<Collider2D, Target>();
-            TargetsBlade.TargetTouched += OnTargetTouched;
-            _targetsSpawner.Initialize(signal.LevelData.TargetsSpawnData, signal.LevelData.LevelTargetsStats);
+            _currentTargetsMap = new Dictionary<GameObject, Target>();
+
+            _targetsSpawner.Initialize(signal.MatchData.DifficultiesData, signal.MatchData.SpawnPointsCount);
             
             _targetsSpawner.TargetSpawned += OnTargetSpawned;
+            
+            TargetsSlicer.TargetSliced += OnTargetSliced;
             _finishZone.TargetTriggeredFinish += OnTargetTriggeredFinish;
         }
         
         private void OnTargetSpawned(Target target)
         {
-            _currentTargetsMap.Add(target.Collider, target);
+            AddTarget(target);
         }
         
-        private void OnTargetTriggeredFinish(Collider2D targetCol)
+        private void OnTargetTriggeredFinish(GameObject targetGo)
         {
-            var target = _currentTargetsMap[targetCol];
-            if (target!=null)
+            if (_currentTargetsMap.ContainsKey(targetGo))
             {
-                _currentTargetsMap.Remove(targetCol);
+                var target = _currentTargetsMap[targetGo];
+                RemoveTarget(target);
                 target.OnFinishHide(() =>
                 {
                     TargetFinished?.Invoke(target);
@@ -53,31 +58,43 @@ namespace Targets.Managers
             }
         }
 
-        private void OnTargetTouched(Collider2D targetCol)
+        private void OnTargetSliced(GameObject targetGo)
         {
-            if (_currentTargetsMap.ContainsKey(targetCol))
+            if (_currentTargetsMap.ContainsKey(targetGo))
             {
-                var target = _currentTargetsMap[targetCol];
-                _currentTargetsMap.Remove(targetCol);
+                var target = _currentTargetsMap[targetGo];
+                RemoveTarget(target);
+                
                 target.OnTouchedHide(() =>
                 {
-                    LeanPool.Despawn(targetCol.gameObject);
+                    TargetKilled?.Invoke(target);
                 });
             }
+        }
+
+        private void AddTarget(Target target)
+        {
+            _currentTargetsMap.Add(target.gameObject, target);
+        }
+
+        private void RemoveTarget(Target target)
+        {
+            _currentTargetsMap.Remove(target.gameObject);
         }
         
         private void ResetController()
         {
             _targetsSpawner.ResetSpawner();
-            var targetsList = _currentTargetsMap.Values.ToList();
+            var targetsList = _currentTargetsMap.Keys.ToList();
             for (int i = 0, count = targetsList.Count; i < count; i++)
             {
-                LeanPool.Despawn(targetsList[i]);
+                var target = targetsList[i];
+                LeanPool.Despawn(target);
             }
             
             _currentTargetsMap = null;
-            TargetsBlade.TargetTouched -= OnTargetTouched;
             _targetsSpawner.TargetSpawned -= OnTargetSpawned;
+            TargetsSlicer.TargetSliced -= OnTargetSliced;
             _finishZone.TargetTriggeredFinish -= OnTargetTriggeredFinish;
         }
         

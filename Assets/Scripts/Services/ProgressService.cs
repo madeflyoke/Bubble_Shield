@@ -1,5 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Score.Controller;
 using Services.Interfaces;
 using Signals;
 using UnityEngine;
@@ -10,33 +11,27 @@ namespace Services
 {
     public class ProgressService : IService
     {
-        [Inject] private SignalBus _signalBus;
-
-        public int LastCompletedLevel { get; private set; }
+        public int ScoreRecord { get; private set; }
         
         public UniTask Initialize(CancellationTokenSource cts)
         {
             ExtractData();
-            _signalBus.Subscribe<LevelCompletedSignal>(OnLevelCompleted);
             return UniTask.CompletedTask;
         }
 
-        private void OnLevelCompleted(LevelCompletedSignal signal)
+        public void TryUpdateRecord(int currentScore)
         {
-            PlayerPrefs.SetString(PlayerPrefsSaveKeys.LEVEL_COMPLETED_KEY, signal.LevelData.Id.ToString());
+            if (currentScore > ScoreRecord)
+            {
+                PlayerPrefs.SetInt(PlayerPrefsSaveKeys.SCORE_RECORD_KEY, currentScore);
+                PlayerPrefs.Save();
+                ScoreRecord = currentScore;
+            }
         }
 
         private void ExtractData() //TODO Change to yandex prefs
         {
-            if (PlayerPrefs.HasKey(PlayerPrefsSaveKeys.LEVEL_COMPLETED_KEY)==false)
-            {
-                LastCompletedLevel = -1;
-            }
-            else
-            {
-                int.TryParse(PlayerPrefs.GetString(PlayerPrefsSaveKeys.LEVEL_COMPLETED_KEY), out int level);
-                LastCompletedLevel = level;
-            }
+            ScoreRecord = PlayerPrefs.GetInt(PlayerPrefsSaveKeys.SCORE_RECORD_KEY);
         }
     }
 }

@@ -11,9 +11,9 @@ TagManager:
   - 
   - Water
   - UI
-  - TargetsBlade
-  - Target
   - 
+  - Target
+  - FinishZone
   - 
   - 
   - 
@@ -41,9 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BackUI
+    uniqueID: 3889868093
+    locked: 0
+  - name: UI
+    uniqueID: 3152041269
+    locked: 0
   - name: VFX
     uniqueID: 2644724255
     locked: 0
-  - name: UI
+  - name: FrontUI
     uniqueID: 1018282873
     locked: 0
