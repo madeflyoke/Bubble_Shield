@@ -127,8 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8a9fcaf402833e49937bb07f983d4cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainMenuScreen: {fileID: 735639953492981403}
-  _gameplayScreen: {fileID: 9029684959525321181}
+  <MainMenuScreen>k__BackingField: {fileID: 735639953492981403}
+  <GameplayScreen>k__BackingField: {fileID: 9029684959525321181}
 --- !u!223 &6355602072899793704
 Canvas:
   m_ObjectHideFlags: 0

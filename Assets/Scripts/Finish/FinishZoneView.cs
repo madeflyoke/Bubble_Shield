@@ -1,4 +1,5 @@
 using TMPro;
+using UniRx;
 using UnityEngine;
 
 namespace Finish
@@ -7,7 +8,13 @@ namespace Finish
     {
         [SerializeField] private TMP_Text _healthText;
         
-        public void SetHealthText(int value)
+        public void LinkReactProperty(IntReactiveProperty health)
+        {
+            health.ObserveEveryValueChanged(x => x.Value)
+                .Subscribe(SetHealthText).AddTo(this);
+        }
+        
+        private void SetHealthText(int value)
         {
             _healthText.text = value.ToString();
         }

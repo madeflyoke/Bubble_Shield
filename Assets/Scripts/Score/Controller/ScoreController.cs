@@ -6,6 +6,7 @@ using Signals;
 using Targets;
 using Targets.Enums;
 using Targets.Managers;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -18,13 +19,16 @@ namespace Score.Controller
         [Inject] private ServicesHolder _servicesHolder;
 
         public event Action<int> CurrentScoreChanged;
-        private int _currentScore;
         
         [SerializeField] private ScoreView _scoreView;
         private MatchData _currentMatchData;
+        private IntReactiveProperty _currentScore;
 
         private void Awake()
         {
+            _currentScore = new IntReactiveProperty();
+            _scoreView.LinkReactProperty(_currentScore);
+            
             _signalBus.Subscribe<MatchStartedSignal>(Initialize);
             _signalBus.Subscribe<ResetMatchSignal>(ResetController);
             _signalBus.Subscribe<MatchCompletedSignal>(OnMatchCompleted);
@@ -34,8 +38,7 @@ namespace Score.Controller
         {
             _currentMatchData = signal.MatchData;
             
-            _currentScore = 0;
-            _scoreView.SetCurrentScore(_currentScore);
+            _currentScore.Value = 0;
             _targetsController.TargetKilled += OnTargetKilled;
         }
         
@@ -44,28 +47,26 @@ namespace Score.Controller
             switch (target.Variant)
             {
                 case TargetVariant.ENEMY:
-                    _currentScore++;
+                    _currentScore.Value++;
                     break;
                 case TargetVariant.ALLY: //move to config "score per ..."?
-                    _currentScore--;
+                    _currentScore.Value--;
                     break;
             }
 
-            _currentScore = Mathf.Clamp(_currentScore, 0, int.MaxValue);
-            _scoreView.SetCurrentScore(_currentScore);
-
-            CurrentScoreChanged?.Invoke(_currentScore);
+            _currentScore.Value = Mathf.Clamp(_currentScore.Value, 0, int.MaxValue);
+            CurrentScoreChanged?.Invoke(_currentScore.Value);
         }
         
         private void OnMatchCompleted()
         {
-            _servicesHolder.GetService<ProgressService>().TryUpdateRecord(_currentScore);
+            _servicesHolder.GetService<ProgressService>().TryUpdateRecord(_currentScore.Value);
         }
         
         private void ResetController()
         {
-            _currentScore = 0;
-            _scoreView.SetCurrentScore(_currentScore);
+            _currentScore.Value = 0;
+            _targetsController.TargetKilled -= OnTargetKilled;
         }
     }
 }

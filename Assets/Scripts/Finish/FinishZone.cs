@@ -3,6 +3,7 @@ using Signals;
 using Targets;
 using Targets.Enums;
 using Targets.Managers;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -16,11 +17,15 @@ namespace Finish
         public event Action<GameObject> TargetTriggeredFinish;
 
         [SerializeField] private FinishZoneView _finishZoneView;
-        private int _currentHealth;
+
+        private IntReactiveProperty _currentHealth;
         private int _maxHealth;
 
         private void Awake()
         {
+            _currentHealth = new IntReactiveProperty();
+            _finishZoneView.LinkReactProperty(_currentHealth);
+
             _signalBus.Subscribe<MatchStartedSignal>(Initialize);
             _signalBus.Subscribe<ResetMatchSignal>(ResetZone);
         }
@@ -28,9 +33,7 @@ namespace Finish
         private void Initialize(MatchStartedSignal signal)
         {
             _maxHealth = signal.MatchData.MaxHealth;
-            _currentHealth = _maxHealth;
-            _finishZoneView.SetHealthText(_currentHealth);
-            
+            _currentHealth.Value = _maxHealth;
             _targetsController.TargetFinished += OnTargetFinished;
         }
         
@@ -39,17 +42,16 @@ namespace Finish
             switch (target.Variant)
             {
                 case TargetVariant.ENEMY:
-                    _currentHealth--;
+                    _currentHealth.Value--;
                     break;
                 case TargetVariant.ALLY:
-                    _currentHealth++;
+                    _currentHealth.Value++;
                     break;
             }
 
-            _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
-            _finishZoneView.SetHealthText(_currentHealth);
+            _currentHealth.Value = Mathf.Clamp(_currentHealth.Value, 0, _maxHealth);
             
-            if (_currentHealth==0)
+            if (_currentHealth.Value==0)
             {
                 _signalBus.Fire(new MatchCompletedSignal());
                 _targetsController.TargetFinished -= OnTargetFinished;
@@ -59,7 +61,7 @@ namespace Finish
         private void ResetZone()
         {
             _targetsController.TargetFinished -= OnTargetFinished;
-            _currentHealth = 0;
+            _currentHealth.Value = 0;
         }
         
         private void OnTriggerEnter2D(Collider2D col)

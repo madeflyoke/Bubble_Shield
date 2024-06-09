@@ -32,7 +32,7 @@ namespace Slicing
             
             Disable();
         
-            _screensController.GetScreen<GameplayScreen>().ObserveEveryValueChanged(x=>x.IsFocused)
+            _screensController.GameplayScreen.ObserveEveryValueChanged(x=>x.IsFocused)
                 .Subscribe(OnGameplayScreenFocusChanged).AddTo(this);
         }
 
