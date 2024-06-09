@@ -39,6 +39,7 @@ namespace Finish
         
         private void OnTargetFinished(Target target)
         {
+            bool isIncreased = false;
             switch (target.Variant)
             {
                 case TargetVariant.ENEMY:
@@ -46,14 +47,16 @@ namespace Finish
                     break;
                 case TargetVariant.ALLY:
                     _currentHealth.Value++;
+                    isIncreased = true;
                     break;
             }
 
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value, 0, _maxHealth);
+            _finishZoneView.ShowChangeEffect(isIncreased);
             
             if (_currentHealth.Value==0)
             {
-                _signalBus.Fire(new MatchCompletedSignal());
+                _signalBus.Fire(new FinishZoneHealthEmptySignal());
                 _targetsController.TargetFinished -= OnTargetFinished;
             }
         }

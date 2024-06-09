@@ -564,8 +564,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: PAUSED
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8bff3b3565b981a42b66367e051f4cee, type: 2}
-  m_sharedMaterial: {fileID: -7590605766162827206, guid: 8bff3b3565b981a42b66367e051f4cee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9db79ed56006e2f4aa883f35362b751f, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 46fb893f2a2e24243a3cee478eaa1f1f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -589,7 +589,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 82.9
+  m_fontSize: 74.55
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -705,7 +705,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5076895108554803335, guid: 42dc24518f014334181438af8db8efee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5076895108554803335, guid: 42dc24518f014334181438af8db8efee, type: 3}
       propertyPath: m_AnchoredPosition.y

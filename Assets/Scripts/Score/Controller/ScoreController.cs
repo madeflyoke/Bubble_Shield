@@ -31,7 +31,7 @@ namespace Score.Controller
             
             _signalBus.Subscribe<MatchStartedSignal>(Initialize);
             _signalBus.Subscribe<ResetMatchSignal>(ResetController);
-            _signalBus.Subscribe<MatchCompletedSignal>(OnMatchCompleted);
+            _signalBus.Subscribe<FinishZoneHealthEmptySignal>(OnMatchCompleted);
         }
         
         private void Initialize(MatchStartedSignal signal)
@@ -61,6 +61,7 @@ namespace Score.Controller
         private void OnMatchCompleted()
         {
             _servicesHolder.GetService<ProgressService>().TryUpdateRecord(_currentScore.Value);
+            _signalBus.Fire(new MatchCompletedSignal(_currentScore.Value));
         }
         
         private void ResetController()

@@ -11,6 +11,7 @@ namespace Installers
 
             Container.DeclareSignal<MatchStartedSignal>();
             Container.DeclareSignal<MatchCompletedSignal>();
+            Container.DeclareSignal<FinishZoneHealthEmptySignal>();
             Container.DeclareSignal<StartMatchCallSignal>();
             Container.DeclareSignal<ResetMatchSignal>();
         }

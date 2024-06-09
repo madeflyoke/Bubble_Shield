@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d1fe0bc1ac9782f4c8f875e1a7cea6d7
+guid: 78d2b4f242879c348948f74dc6d5418c
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,8 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Poppins
   fontNames:
-  - Poppins
+  - Potato sans
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
