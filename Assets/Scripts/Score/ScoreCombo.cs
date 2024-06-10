@@ -15,7 +15,6 @@ namespace Score
 
         [SerializeField] private int _maxCombo = 50;
         [SerializeField] private TMP_Text _comboValueText;
-        private int _prevValue;
         private StringBuilder _stringBuilder;
         private Tween _tween;
         private Vector3 _comboTextDefaultScale;
@@ -66,7 +65,6 @@ namespace Score
         public void ResetCombo()
         {
             CurrentCombo = 0;
-            _prevValue = 0;
             _comboValueText.text = String.Empty;
         }
     }
