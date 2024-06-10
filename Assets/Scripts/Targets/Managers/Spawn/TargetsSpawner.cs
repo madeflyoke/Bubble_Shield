@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Match;
-using Score.Controller;
+using Score;
 using Targets.Enums;
 using UnityEngine;
 using Utility;

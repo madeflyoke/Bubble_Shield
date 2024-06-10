@@ -2,7 +2,7 @@ using TMPro;
 using UniRx;
 using UnityEngine;
 
-namespace Score.View
+namespace Score
 {
     public class ScoreView : MonoBehaviour
     {

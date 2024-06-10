@@ -1,6 +1,5 @@
 using System;
 using Match;
-using Score.View;
 using Services;
 using Signals;
 using Targets;
@@ -10,7 +9,7 @@ using UniRx;
 using UnityEngine;
 using Zenject;
 
-namespace Score.Controller
+namespace Score
 {
     public class ScoreController : MonoBehaviour
     {
@@ -21,6 +20,7 @@ namespace Score.Controller
         public event Action<int> CurrentScoreChanged;
         
         [SerializeField] private ScoreView _scoreView;
+        [SerializeField] private ScoreCombo _scoreCombo;
         private MatchData _currentMatchData;
         private IntReactiveProperty _currentScore;
 
@@ -44,10 +44,12 @@ namespace Score.Controller
         
         private void OnTargetKilled(Target target)
         {
+            bool isIncreased = false;
             switch (target.Variant)
             {
                 case TargetVariant.ENEMY:
                     _currentScore.Value++;
+                    isIncreased = true;
                     break;
                 case TargetVariant.ALLY: //move to config "score per ..."?
                     _currentScore.Value--;
@@ -56,6 +58,7 @@ namespace Score.Controller
 
             _currentScore.Value = Mathf.Clamp(_currentScore.Value, 0, int.MaxValue);
             CurrentScoreChanged?.Invoke(_currentScore.Value);
+            _scoreCombo.TrySetCombo(isIncreased);
         }
         
         private void OnMatchCompleted()
@@ -68,6 +71,7 @@ namespace Score.Controller
         {
             _currentScore.Value = 0;
             _targetsController.TargetKilled -= OnTargetKilled;
+            _scoreCombo.ResetCombo();
         }
     }
 }

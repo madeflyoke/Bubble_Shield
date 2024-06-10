@@ -1,6 +1,5 @@
 using System;
 using DG.Tweening;
-using EasyButtons;
 using TMPro;
 using UniRx;
 using UnityEngine;
