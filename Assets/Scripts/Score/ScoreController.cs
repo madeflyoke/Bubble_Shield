@@ -1,4 +1,3 @@
-using System;
 using Match;
 using Services;
 using Signals;
@@ -16,11 +15,10 @@ namespace Score
         [Inject] private SignalBus _signalBus;
         [Inject] private TargetsController _targetsController;
         [Inject] private ServicesHolder _servicesHolder;
-
-        public event Action<int> CurrentScoreChanged;
         
         [SerializeField] private ScoreView _scoreView;
         [SerializeField] private ScoreCombo _scoreCombo;
+        
         private MatchData _currentMatchData;
         private IntReactiveProperty _currentScore;
 
@@ -28,7 +26,6 @@ namespace Score
         {
             _currentScore = new IntReactiveProperty();
             _scoreView.LinkReactProperty(_currentScore);
-            
             _signalBus.Subscribe<MatchStartedSignal>(Initialize);
             _signalBus.Subscribe<ResetMatchSignal>(ResetController);
             _signalBus.Subscribe<FinishZoneHealthEmptySignal>(OnMatchCompleted);
@@ -44,21 +41,16 @@ namespace Score
         
         private void OnTargetKilled(Target target)
         {
-            bool isIncreased = false;
-            switch (target.Variant)
+            if (target.Variant == TargetVariant.ENEMY)
             {
-                case TargetVariant.ENEMY:
-                    _currentScore.Value++;
-                    isIncreased = true;
-                    break;
-                case TargetVariant.ALLY: //move to config "score per ..."?
-                    _currentScore.Value--;
-                    break;
+                _scoreCombo.TrySetCombo(true);
+                _currentScore.Value += _scoreCombo.CurrentCombo;
+                _currentScore.Value = Mathf.Clamp(_currentScore.Value, 0, int.MaxValue);
             }
-
-            _currentScore.Value = Mathf.Clamp(_currentScore.Value, 0, int.MaxValue);
-            CurrentScoreChanged?.Invoke(_currentScore.Value);
-            _scoreCombo.TrySetCombo(isIncreased);
+            else
+            {
+                _scoreCombo.TrySetCombo(false);
+            }
         }
         
         private void OnMatchCompleted()

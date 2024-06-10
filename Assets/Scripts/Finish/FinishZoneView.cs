@@ -34,7 +34,7 @@ namespace Finish
         {
             _tween?.Kill();
             _tween = _healthText.DOColor(isIncrease ? _increaseColor : _decreaseColor, 0.15f).SetEase(Ease.Linear)
-                .SetLoops(2, LoopType.Yoyo).OnKill(()=>_healthText.color = _defaultColor);
+                .SetLoops(2, LoopType.Yoyo).OnKill(()=>_healthText.color = _defaultColor).SetUpdate(true);
         }
 
         private void OnDisable()

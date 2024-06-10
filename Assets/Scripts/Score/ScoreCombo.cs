@@ -54,7 +54,7 @@ namespace Score
                     () =>
                     {
                         _comboValueText.transform.localScale = _comboTextDefaultScale;
-                    });
+                    }).SetUpdate(true);
                 return;
             }
 

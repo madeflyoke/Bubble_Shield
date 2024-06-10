@@ -17,7 +17,7 @@ MonoBehaviour:
     SpawnPointsCount: 5
     DifficultiesData:
     - Index: 0
-      ScoreToNextDifficulty: 15
+      TargetsKillToNextDifficulty: 15
       TargetsSpawnData:
         TargetSpawnDelay: 1.5
         TargetsPerSpawn: 2
@@ -25,7 +25,7 @@ MonoBehaviour:
       TargetsStats:
         Speed: 1.5
     - Index: 1
-      ScoreToNextDifficulty: 60
+      TargetsKillToNextDifficulty: 40
       TargetsSpawnData:
         TargetSpawnDelay: 1
         TargetsPerSpawn: 3
@@ -33,7 +33,7 @@ MonoBehaviour:
       TargetsStats:
         Speed: 1.5
     - Index: 2
-      ScoreToNextDifficulty: 120
+      TargetsKillToNextDifficulty: 80
       TargetsSpawnData:
         TargetSpawnDelay: 1
         TargetsPerSpawn: 4
@@ -41,7 +41,7 @@ MonoBehaviour:
       TargetsStats:
         Speed: 2
     - Index: 3
-      ScoreToNextDifficulty: 160
+      TargetsKillToNextDifficulty: 160
       TargetsSpawnData:
         TargetSpawnDelay: 0.5
         TargetsPerSpawn: 1
@@ -49,7 +49,7 @@ MonoBehaviour:
       TargetsStats:
         Speed: 3
     - Index: 4
-      ScoreToNextDifficulty: 2147483647
+      TargetsKillToNextDifficulty: 2147483647
       TargetsSpawnData:
         TargetSpawnDelay: 1.5
         TargetsPerSpawn: 5
