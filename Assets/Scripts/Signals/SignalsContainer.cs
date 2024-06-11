@@ -24,5 +24,15 @@ namespace Signals
 
     public struct MatchCompletedSignal
     {
+        public readonly int FinalScore;
+
+        public MatchCompletedSignal(int finalScore)
+        {
+            FinalScore = finalScore;
+        }
+    }
+
+    public struct FinishZoneHealthEmptySignal
+    {
     }
 }

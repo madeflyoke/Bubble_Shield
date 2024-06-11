@@ -21,6 +21,7 @@ namespace Targets.Managers
         [SerializeField] private TargetsSpawner _targetsSpawner;
         [SerializeField] private FinishZone _finishZone;
         private Dictionary<GameObject, Target> _currentTargetsMap;
+        private int _targetsKilledCount;
 
         private void Awake()
         {
@@ -33,7 +34,6 @@ namespace Targets.Managers
             _currentTargetsMap = new Dictionary<GameObject, Target>();
 
             _targetsSpawner.Initialize(signal.MatchData.DifficultiesData, signal.MatchData.SpawnPointsCount);
-            
             _targetsSpawner.TargetSpawned += OnTargetSpawned;
             
             TargetsSlicer.TargetSliced += OnTargetSliced;
@@ -68,6 +68,8 @@ namespace Targets.Managers
                 target.OnTouchedHide(() =>
                 {
                     TargetKilled?.Invoke(target);
+                    ++_targetsKilledCount;
+                    _targetsSpawner.TryIncreaseDifficulty(_targetsKilledCount);
                 });
             }
         }
@@ -96,6 +98,8 @@ namespace Targets.Managers
             _targetsSpawner.TargetSpawned -= OnTargetSpawned;
             TargetsSlicer.TargetSliced -= OnTargetSliced;
             _finishZone.TargetTriggeredFinish -= OnTargetTriggeredFinish;
+
+            _targetsKilledCount = 0;
         }
         
 #if UNITY_EDITOR

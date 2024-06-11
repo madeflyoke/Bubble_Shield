@@ -8,7 +8,7 @@ namespace Match
     public class DifficultyData
     {
         public int Index;
-        public int ScoreToNextDifficulty;
+        public int TargetsKillToNextDifficulty;
         public TargetsSpawnData TargetsSpawnData;
         public TargetStats TargetsStats;
     }

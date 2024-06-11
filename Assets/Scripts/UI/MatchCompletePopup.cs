@@ -11,6 +11,7 @@ namespace UI
 
         public bool IsShowed { get; private set; }
 
+        [SerializeField] private MatchCompleteScoreView _scoreView;
         [SerializeField] private RestartMatchButton _restartMatchButton;
         [SerializeField] private PopupAnimator _popupAnimator;
 
@@ -18,6 +19,7 @@ namespace UI
         {
             IsShowed = true;
             
+            _scoreView.SetScoreView(signal.FinalScore, _servicesHolder.GetService<ProgressService>().ScoreRecord);
             _restartMatchButton.Enable(Hide);
             _servicesHolder.GetService<PauseService>().SetPause(true);
             _popupAnimator.PlayShowAnimation();

@@ -22,7 +22,7 @@ namespace Match.Configs
                 MatchData.DifficultiesData[i] = difficultyData;
             }
 
-            MatchData.DifficultiesData[^1].ScoreToNextDifficulty = int.MaxValue;
+            MatchData.DifficultiesData[^1].TargetsKillToNextDifficulty = int.MaxValue;
         }
 
         public void OnAfterDeserialize()

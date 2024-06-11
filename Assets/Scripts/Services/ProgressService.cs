@@ -1,6 +1,5 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Score.Controller;
 using Services.Interfaces;
 using Signals;
 using UnityEngine;

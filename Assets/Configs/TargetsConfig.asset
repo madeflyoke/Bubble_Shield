@@ -15,7 +15,7 @@ MonoBehaviour:
   _targetVariantsData:
   - Variant: 2
     ConfigDatas:
-    - Sprite: {fileID: -1931571684, guid: 11785ba809aa4f44cb4d77eff0fc2fa5, type: 3}
+    - Sprite: {fileID: 21300000, guid: 76ac6909b8506af4abf0e8e14f275937, type: 3}
       RelatedColor: {r: 0.9803922, g: 0.9843138, b: 0.9803922, a: 1}
   - Variant: 1
     ConfigDatas:

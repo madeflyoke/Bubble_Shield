@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Match;
-using Score.Controller;
+using Score;
 using Targets.Enums;
 using UnityEngine;
 using Utility;
@@ -21,7 +21,6 @@ namespace Targets.Managers.Spawn
         
         [SerializeField] private TargetsFactory _targetsFactory;
         [SerializeField] private RectTransform _targetsHolder;
-        [SerializeField] private ScoreController _scoreController;
 
         private List<DifficultyData> _difficultyDatas;
         private DifficultyData _currentDifficultyData;
@@ -38,7 +37,6 @@ namespace Targets.Managers.Spawn
         public void Initialize(List<DifficultyData> difficultiesData, int spawnPointsCount)
         {
             _cts = new CancellationTokenSource();
-            _scoreController.CurrentScoreChanged += OnCurrentScoreChanged;
             
             var spawnPoints = new SpawnPointsCreator(_spawnHeight,  _sidesSpawnPadding, spawnPointsCount, _targetsHolder)
                 .CreateSpawnPoints(out Vector3 targetCalculatedScale);
@@ -50,6 +48,21 @@ namespace Targets.Managers.Spawn
             _difficultyDatas = difficultiesData;
             SetCurrentDifficultyData(0);
         }
+        
+        public async void TryIncreaseDifficulty(int killedCount)
+        {
+            if (_currentDifficultyData.TargetsKillToNextDifficulty <= killedCount && _nextDifficultyCalled == false)
+            {
+                _nextDifficultyCalled = true;
+                var nextIndex = Mathf.Clamp(_difficultyDatas.IndexOf(_currentDifficultyData)+1, 0, _difficultyDatas.Count-1);
+
+                await _spawnTask;
+                
+                _cts = new CancellationTokenSource();
+                _nextDifficultyCalled = false;
+                SetCurrentDifficultyData(nextIndex);
+            }
+        }
 
         private void SetCurrentDifficultyData(int index)
         {
@@ -57,23 +70,6 @@ namespace Targets.Managers.Spawn
             
             _targetsFactory.SetCurrentSpecifications(_currentDifficultyData.TargetsStats);
             _spawnTask = StartSpawnCycle();
-        }
-        
-        private async void OnCurrentScoreChanged(int score)
-        {
-            if (_currentDifficultyData.ScoreToNextDifficulty <= score)
-            {
-                _scoreController.CurrentScoreChanged -= OnCurrentScoreChanged;
-                _nextDifficultyCalled = true;
-                var nextIndex = Mathf.Clamp(_difficultyDatas.IndexOf(_currentDifficultyData)+1, 0, _difficultyDatas.Count-1);
-
-                await _spawnTask;
-                
-                _cts = new CancellationTokenSource();
-                _scoreController.CurrentScoreChanged += OnCurrentScoreChanged;
-                _nextDifficultyCalled = false;
-                SetCurrentDifficultyData(nextIndex);
-            }
         }
 
         private async UniTask StartSpawnCycle()
@@ -168,7 +164,7 @@ namespace Targets.Managers.Spawn
         public void ResetSpawner()
         {
             _cts?.Cancel();
-            _scoreController.CurrentScoreChanged -= OnCurrentScoreChanged;
+            _nextDifficultyCalled = false;
         }
         
         private void OnDisable()

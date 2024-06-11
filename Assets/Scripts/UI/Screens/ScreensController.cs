@@ -12,16 +12,16 @@ namespace UI.Screens
     {
         [Inject] private SignalBus _signalBus;
         
-        [SerializeField] private MainMenuScreen _mainMenuScreen;
-        [SerializeField] private GameplayScreen _gameplayScreen;
+        [field: SerializeField] public MainMenuScreen MainMenuScreen { get; private set; }
+        [field: SerializeField] public GameplayScreen GameplayScreen { get; private set; }
         private List<IScreen> _screens;
 
         private void Awake()
         {
             _screens = new List<IScreen>
             {
-                _mainMenuScreen,
-                _gameplayScreen
+                MainMenuScreen,
+                GameplayScreen
             };
             _signalBus.Subscribe<MatchStartedSignal>(OnMatchStarted);
         }
@@ -31,11 +31,6 @@ namespace UI.Screens
             ShowSingleScreen<MainMenuScreen>();
         }
 
-        public T GetScreen<T>() where T : IScreen
-        {
-            return (T)_screens.FirstOrDefault(x => x.GetType() == typeof(T));
-        }
-        
         private void OnMatchStarted(MatchStartedSignal _)
         {
             ShowSingleScreen<GameplayScreen>();
