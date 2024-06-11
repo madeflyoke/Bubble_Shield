@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LevelConfig
   m_EditorClassIdentifier: 
   <MatchData>k__BackingField:
-    MaxHealth: 9999999
+    MaxHealth: 100
     SpawnPointsCount: 5
     DifficultiesData:
     - Index: 0
