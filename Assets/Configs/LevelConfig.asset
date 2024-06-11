@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LevelConfig
   m_EditorClassIdentifier: 
   <MatchData>k__BackingField:
-    MaxHealth: 100
+    MaxHealth: 5
     SpawnPointsCount: 5
     DifficultiesData:
     - Index: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
         TargetsPerSpawn: 3
         AvarageAllyPerWaveSpawnRatio: 10
       TargetsStats:
-        Speed: 1.5
+        Speed: 2
     - Index: 2
       TargetsKillToNextDifficulty: 80
       TargetsSpawnData:
@@ -39,7 +39,7 @@ MonoBehaviour:
         TargetsPerSpawn: 4
         AvarageAllyPerWaveSpawnRatio: 15
       TargetsStats:
-        Speed: 2
+        Speed: 2.5
     - Index: 3
       TargetsKillToNextDifficulty: 160
       TargetsSpawnData:
@@ -55,4 +55,4 @@ MonoBehaviour:
         TargetsPerSpawn: 5
         AvarageAllyPerWaveSpawnRatio: 20
       TargetsStats:
-        Speed: 2
+        Speed: 4
