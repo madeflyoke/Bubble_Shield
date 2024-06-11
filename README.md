@@ -15,4 +15,4 @@
 
 ## Screenshots
 
-<img src="/Screenshots/1.jpg"/> <img src="/Screenshots/2.jpg"/> 
+<img src="/Screenshots/1.jpg" width="368"/> <img src="/Screenshots/2.jpg" width="368"/> 
